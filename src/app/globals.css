@@ -1,26 +1,118 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* MODERN SPORT PALETTE (Red & White) */
+
+  /* Primary: Dynamic Sports Red */
+  --color-primary: #DC2626;
+  /* red-600 */
+  --color-primary-hover: #B91C1C;
+  /* red-700 */
+
+  /* Secondary: Deep Charcoal / Black */
+  --color-secondary: #0F172A;
+  /* slate-900 */
+  --color-secondary-hover: #020617;
+  /* slate-950 */
+
+  /* Accent: Clean White / Light Gray */
+  --color-accent: #F8FAFC;
+  /* slate-50 */
+
+  /* Neutrals */
+  --background: #FFFFFF;
+  --foreground: #0F172A;
+
+  /* Glass Effect Variables */
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-bg: rgba(255, 255, 255, 0.8);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+
+  --color-secondary: var(--color-secondary);
+  --color-secondary-hover: var(--color-secondary-hover);
+
+  --color-accent: var(--color-accent);
+
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-outfit);
+
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes subtle-zoom {
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-subtle-zoom {
+  animation: subtle-zoom 20s infinite alternate linear;
+  will-change: transform;
 }
 
 @media (prefers-color-scheme: dark) {
+
+  /* Keeping light mode as default for clean sports look as requested, but overriding simple dark mode preference to maintain brand identity */
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #FFFFFF;
+    --foreground: #0F172A;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Custom Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(to right, var(--color-primary), #EF4444);
 }
