@@ -57,6 +57,7 @@ export default function Navbar() {
                                 src="/main-logo.jpeg"
                                 alt="OFSU Logo"
                                 fill
+                                sizes="64px"
                                 className="object-cover"
                             />
                         </div>

@@ -18,7 +18,14 @@ export const metadata: Metadata = {
   title: "Kemp OFS Ústí - Fotbalové kempy pro budoucí hvězdy",
   description: "Připojte se k nám na letní fotbalové kempy v Ústí nad Labem. Rozvoj talentu, zábava a profesionální trenéři.",
   icons: {
-    icon: '/main-logo.jpeg',
+    icon: [
+      { url: '/main-logo.jpeg' },
+      { url: '/main-logo.jpeg', type: 'image/jpeg' },
+    ],
+    shortcut: ['/main-logo.jpeg'],
+    apple: [
+      { url: '/main-logo.jpeg' },
+    ],
   },
 };
 
