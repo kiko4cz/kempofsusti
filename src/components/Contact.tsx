@@ -1,9 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, ArrowRight } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, ArrowRight, Check, Copy } from 'lucide-react';
 
 export default function Contact() {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopyEmail = () => {
+        navigator.clipboard.writeText('kempofsusti@seznam.cz');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
     return (
         <section id="contact" className="py-24 bg-white">
             <div className="container mx-auto px-4">
@@ -20,16 +28,25 @@ export default function Contact() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
                         {/* Contact Cards */}
                         <div className="space-y-6">
-                            <a href="mailto:kempofsusti@seznam.cz" className="flex items-center gap-6 p-6 rounded-3xl bg-gray-50 hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-gray-100 group">
-                                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                                    <Mail size={32} />
+                            <button
+                                onClick={handleCopyEmail}
+                                className="w-full flex items-center gap-6 p-6 rounded-3xl bg-gray-50 hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-gray-100 group cursor-pointer text-left"
+                            >
+                                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-sm transition-all duration-300 ${copied ? 'bg-green-500 text-white scale-110' : 'bg-white text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-white'}`}>
+                                    {copied ? <Check size={32} /> : <Mail size={32} />}
                                 </div>
                                 <div>
-                                    <p className="text-sm text-gray-400 font-bold uppercase tracking-wider mb-1">E-mail</p>
+                                    <p className={`text-sm font-bold uppercase tracking-wider mb-1 transition-colors ${copied ? 'text-green-600' : 'text-gray-400'}`}>
+                                        {copied ? 'Zkopírováno!' : 'E-mail (klikni pro zkopírování)'}
+                                    </p>
                                     <p className="text-xl md:text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors">kempofsusti@seznam.cz</p>
                                 </div>
-                                <ArrowRight className="ml-auto text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                            </a>
+                                {copied ? (
+                                    <Check className="ml-auto text-green-500" />
+                                ) : (
+                                    <Copy className="ml-auto text-gray-300 group-hover:text-primary group-hover:scale-110 transition-all" />
+                                )}
+                            </button>
 
                             <a href="tel:+420123456789" className="flex items-center gap-6 p-6 rounded-3xl bg-gray-50 border border-transparent hover:bg-white hover:shadow-xl transition-all duration-300 hover:border-gray-100 group cursor-pointer">
                                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">

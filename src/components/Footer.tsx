@@ -1,9 +1,17 @@
 'use client';
 
-import { Facebook, Instagram, ShieldCheck, Phone, Mail, MapPin, ArrowUp } from 'lucide-react';
+import { useState } from 'react';
+import { Facebook, Instagram, ShieldCheck, Phone, Mail, MapPin, ArrowUp, Check, Copy } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Footer() {
+    const [copied, setCopied] = useState(false);
+
+    const handleCopyEmail = () => {
+        navigator.clipboard.writeText('kempofsusti@seznam.cz');
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -75,15 +83,17 @@ export default function Footer() {
                                 </div>
                             </a>
 
-                            <a href="mailto:kempofsusti@seznam.cz" className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors group">
-                                <div className="p-3 bg-primary/20 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-                                    <Mail size={20} />
+                            <button onClick={handleCopyEmail} className="w-full flex items-start gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors group text-left">
+                                <div className={`p-3 rounded-xl transition-colors ${copied ? 'bg-green-500/20 text-green-500' : 'bg-primary/20 text-primary group-hover:bg-primary group-hover:text-white'}`}>
+                                    {copied ? <Check size={20} /> : <Mail size={20} />}
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Napište nám</p>
+                                    <p className={`text-xs uppercase font-bold tracking-wider mb-1 ${copied ? 'text-green-500' : 'text-gray-400'}`}>
+                                        {copied ? 'Zkopírováno' : 'Napište nám (zkopírovat)'}
+                                    </p>
                                     <p className="font-semibold text-white group-hover:text-primary transition-colors break-all">kempofsusti@seznam.cz</p>
                                 </div>
-                            </a>
+                            </button>
 
                             <div className="sm:col-span-2 flex items-start gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors group">
                                 <div className="p-3 bg-primary/20 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
