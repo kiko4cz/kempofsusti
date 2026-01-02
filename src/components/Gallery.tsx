@@ -9,8 +9,8 @@ const images = [
     { src: 'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=800&auto=format&fit=crop', alt: 'Trénink' },
     { src: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=800&auto=format&fit=crop', alt: 'Zápas' },
     { src: 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?q=80&w=800&auto=format&fit=crop', alt: 'Radost' },
-    { src: 'https://images.unsplash.com/photo-1560272564-c8304700f8ac?q=80&w=800&auto=format&fit=crop', alt: 'Trenér a tým' },
-    { src: 'https://images.unsplash.com/photo-1529900748604-07564a03e7a3?q=80&w=800&auto=format&fit=crop', alt: 'Skupina dětí' },
+    { src: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=800&auto=format&fit=crop', alt: 'Trenér a tým' },
+    { src: 'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?q=80&w=800&auto=format&fit=crop', alt: 'Skupina dětí' },
     { src: 'https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?q=80&w=800&auto=format&fit=crop', alt: 'Soutěžení' },
 ];
 
@@ -49,7 +49,7 @@ export default function Gallery() {
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.05 }}
                             className={`relative rounded-3xl overflow-hidden group cursor-pointer ${index === 0 ? 'md:col-span-2 md:row-span-2' :
-                                    index === 1 ? 'md:col-span-1 md:row-span-2' : ''
+                                index === 1 ? 'md:col-span-1 md:row-span-2' : ''
                                 }`}
                         >
                             <Image
