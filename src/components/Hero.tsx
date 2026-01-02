@@ -75,13 +75,23 @@ export default function Hero() {
                     transition={{ delay: 0.5, duration: 0.8 }}
                     className="absolute bottom-10 right-4 lg:right-10 hidden md:flex gap-4"
                 >
-                    <div className="glass-panel p-6 rounded-2xl max-w-xs transform hover:-translate-y-2 transition-transform duration-300">
-                        <p className="text-primary font-bold text-4xl mb-1">5+</p>
-                        <p className="text-gray-200 text-sm font-medium">Let tradice a zkušeností s výchovou talentů</p>
-                    </div>
-                    <div className="glass-panel p-6 rounded-2xl max-w-xs transform hover:-translate-y-2 transition-transform duration-300 delay-100">
-                        <p className="text-primary font-bold text-4xl mb-1">100%</p>
-                        <p className="text-gray-200 text-sm font-medium">Spokojenost rodičů a dětí v minulých letech</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-8">
+                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group">
+                            <div className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 mb-2 group-hover:scale-105 transition-transform origin-left">
+                                5+
+                            </div>
+                            <p className="text-gray-200 text-sm font-medium leading-relaxed">
+                                Let tradice a zkušeností s výchovou talentů
+                            </p>
+                        </div>
+                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group">
+                            <div className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-400 mb-2 group-hover:scale-105 transition-transform origin-left">
+                                100%
+                            </div>
+                            <p className="text-gray-200 text-sm font-medium leading-relaxed">
+                                Spokojenost rodičů a dětí v minulých letech
+                            </p>
+                        </div>
                     </div>
                 </motion.div>
             </div>

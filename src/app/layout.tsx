@@ -15,8 +15,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Kemp OFS Ústí - Fotbalové kempy",
-  description: "Fotbalové kempy OFS Ústí nad Labem - Profesionální tréninky, zábava a sport pro děti.",
+  title: "Kemp OFS Ústí - Fotbalové kempy pro budoucí hvězdy",
+  description: "Připojte se k nám na letní fotbalové kempy v Ústí nad Labem. Rozvoj talentu, zábava a profesionální trenéři.",
+  icons: {
+    icon: '/main-logo.jpeg',
+  },
 };
 
 export default function RootLayout({
