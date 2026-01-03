@@ -31,16 +31,16 @@ export default function Hero() {
                     >
                         {/* Heading */}
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-[0.9] text-white tracking-tight">
-                            BUDOUCNOST <br />
+                            FOTBALEM <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-500">
-                                FOTBALU
+                                ZÁBAVA
                             </span>
-                            <br />ZAČÍNÁ ZDE
+                            <br />JEN ZAČÍNÁ
                         </h1>
 
                         <p className="text-lg md:text-2xl text-gray-200 mb-10 max-w-2xl font-light leading-relaxed border-l-4 border-primary pl-6">
                             Rodinné zázemí, přátelští trenéři a nezapomenutelné zážitky.
-                            <strong className="text-white block mt-2">Přidej se k týmu vítězů v areálu TJ Vaňov.</strong>
+                            <strong className="text-white block mt-2">Přidej se k naší kempové rodině.</strong>
                         </p>
 
                         {/* CTA Buttons */}
@@ -73,23 +73,34 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5, duration: 0.8 }}
-                    className="absolute bottom-10 right-4 lg:right-10 hidden md:flex gap-4"
+                    className="absolute bottom-4 left-4 right-4 md:left-auto md:right-10 md:bottom-10 md:w-auto"
                 >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-8">
-                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group">
-                            <div className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 mb-2 group-hover:scale-105 transition-transform origin-left">
-                                5+
+                    <div className="flex flex-row md:flex-row gap-3 md:gap-6 justify-center md:justify-start w-full">
+                        {/* 15 Years Card */}
+                        <div className="flex-1 md:flex-none bg-white/10 backdrop-blur-md rounded-xl md:rounded-2xl p-3 md:p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group min-w-0">
+                            <div className="flex items-center gap-2 md:gap-3 mb-0 md:mb-3 justify-center md:justify-start">
+                                <span className="text-3xl md:text-5xl font-black text-white group-hover:scale-110 transition-transform duration-300 whitespace-nowrap">15</span>
+                                <div className="flex flex-col justify-center border-l border-white/20 pl-2 md:pl-3 leading-none h-8 md:h-10">
+                                    <span className="text-primary font-bold uppercase tracking-wider text-[10px] md:text-sm">Let</span>
+                                    <span className="text-gray-300 font-bold uppercase tracking-wider text-[10px] md:text-sm">Tradice</span>
+                                </div>
                             </div>
-                            <p className="text-gray-200 text-sm font-medium leading-relaxed">
-                                Let tradice a zkušeností s výchovou talentů
+                            <p className="text-gray-400 text-xs md:text-sm font-medium leading-tight hidden md:block mt-2">
+                                Zkušeností s výchovou mladých talentů.
                             </p>
                         </div>
-                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group">
-                            <div className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-400 mb-2 group-hover:scale-105 transition-transform origin-left">
-                                100%
+
+                        {/* 100% Satisfaction Card */}
+                        <div className="flex-1 md:flex-none bg-white/10 backdrop-blur-md rounded-xl md:rounded-2xl p-3 md:p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group min-w-0">
+                            <div className="flex items-center gap-2 md:gap-3 mb-0 md:mb-3 justify-center md:justify-start">
+                                <span className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-400 group-hover:scale-110 transition-transform duration-300 whitespace-nowrap">100%</span>
+                                <div className="flex flex-col justify-center border-l border-white/20 pl-2 md:pl-3 leading-none h-8 md:h-10">
+                                    <span className="text-white font-bold uppercase tracking-wider text-[10px] md:text-sm truncate">Spokojenost</span>
+                                    <span className="text-gray-400 font-bold uppercase tracking-wider text-[10px] md:text-sm truncate">Rodičů</span>
+                                </div>
                             </div>
-                            <p className="text-gray-200 text-sm font-medium leading-relaxed">
-                                Spokojenost rodičů a dětí v minulých letech
+                            <p className="text-gray-400 text-xs md:text-sm font-medium leading-tight hidden md:block mt-2">
+                                Pozitivní ohlasy dětí i rodičů z minulých let.
                             </p>
                         </div>
                     </div>
@@ -98,7 +109,7 @@ export default function Hero() {
 
             {/* Scroll Indicator */}
             <motion.div
-                className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50"
+                className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 hidden md:block"
                 animate={{ y: [0, 10, 0] }}
                 transition={{ repeat: Infinity, duration: 2 }}
             >

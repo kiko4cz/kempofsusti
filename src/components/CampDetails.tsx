@@ -9,7 +9,7 @@ const terms = [
         dates: '13. 7. – 17. 7. 2026',
         location: 'Areál TJ Vaňov, Brzákova 146/1',
         price: '3 000 Kč',
-        features: ['Celodenní strava', 'Dres s vlastním jménem', 'Pitný režim'],
+        features: ['Celodenní strava', 'Kempový set', 'Pitný režim'],
         status: 'Volno',
     },
     {
@@ -17,12 +17,13 @@ const terms = [
         dates: '20. 7. – 24. 7. 2026',
         location: 'Areál TJ Vaňov, Brzákova 146/1',
         price: '3 000 Kč',
-        features: ['Celodenní strava', 'Dres s vlastním jménem', 'Pitný režim'],
+        features: ['Celodenní strava', 'Kempový set', 'Pitný režim'],
         status: 'Volno',
     },
 ];
 
 export default function CampDetails() {
+    // Camp details section
     return (
         <section id="camps" className="py-24 bg-secondary text-white relative overflow-hidden">
             {/* Background elements - static for better performance */}

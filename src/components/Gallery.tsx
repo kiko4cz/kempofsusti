@@ -1,20 +1,60 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Image as ImageIcon, ArrowUpRight } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Image as ImageIcon, ArrowUpRight, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 
-// Placeholder images using Unsplash
+// Local images from public/galerie
 const images = [
-    { src: 'https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?q=80&w=800&auto=format&fit=crop', alt: 'Trénink' },
-    { src: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?q=80&w=800&auto=format&fit=crop', alt: 'Zápas' },
-    { src: 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?q=80&w=800&auto=format&fit=crop', alt: 'Radost' },
-    { src: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=800&auto=format&fit=crop', alt: 'Trenér a tým' },
-    { src: 'https://images.unsplash.com/photo-1526232761682-d26e03ac148e?q=80&w=800&auto=format&fit=crop', alt: 'Skupina dětí' },
-    { src: 'https://images.unsplash.com/photo-1577471488278-16eec37ffcc2?q=80&w=800&auto=format&fit=crop', alt: 'Soutěžení' },
+    { src: '/galerie/IMG_0415.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/IMG_0426.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/IMG_0436.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/IMG_0438.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/IMG_5612.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/f0928466-ca1b-4100-8310-93c50c93b1de.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/771f082a-d782-47f9-8fdf-bef6287be644.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/IMG_0046.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/IMG_0057.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/IMG_0252.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/IMG_0279.jpg', alt: 'Momentka z kempu' },
+    { src: '/galerie/IMG_0297.jpg', alt: 'Momentka z kempu' },
 ];
 
 export default function Gallery() {
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+    const handleNext = useCallback((e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        setSelectedIndex((prev) => (prev === null ? null : (prev + 1) % images.length));
+    }, []);
+
+    const handlePrev = useCallback((e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        setSelectedIndex((prev) => (prev === null ? null : (prev - 1 + images.length) % images.length));
+    }, []);
+
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (selectedIndex === null) return;
+        if (e.key === 'Escape') setSelectedIndex(null);
+        if (e.key === 'ArrowRight') handleNext();
+        if (e.key === 'ArrowLeft') handlePrev();
+    }, [selectedIndex, handleNext, handlePrev]);
+
+    useEffect(() => {
+        if (selectedIndex !== null) {
+            document.body.style.overflow = 'hidden';
+            window.addEventListener('keydown', handleKeyDown);
+        } else {
+            document.body.style.overflow = 'unset';
+            window.removeEventListener('keydown', handleKeyDown);
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [selectedIndex, handleKeyDown]);
+
     return (
         <section id="gallery" className="py-24 bg-white relative">
             <div className="container mx-auto px-4">
@@ -29,7 +69,7 @@ export default function Gallery() {
                         </p>
                     </div>
                     <a
-                        href="https://kempofsusti.estranky.cz/fotoalbum/"
+                        href="https://kempofsusti.rajce.idnes.cz/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group flex items-center gap-3 bg-gray-50 hover:bg-black hover:text-white text-secondary font-bold py-3 px-6 rounded-full transition-all duration-300"
@@ -44,6 +84,8 @@ export default function Gallery() {
                     {images.map((img, index) => (
                         <motion.div
                             key={index}
+                            layoutId={`image-${index}`}
+                            onClick={() => setSelectedIndex(index)}
                             initial={{ opacity: 0, scale: 0.9 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
@@ -58,13 +100,67 @@ export default function Gallery() {
                                 fill
                                 className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end p-6">
-                                <span className="text-white font-bold text-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{img.alt}</span>
+                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <div className="bg-white/10 backdrop-blur-md p-3 rounded-full text-white">
+                                    <ArrowUpRight size={24} />
+                                </div>
                             </div>
                         </motion.div>
                     ))}
                 </div>
             </div>
+
+            {/* Lightbox */}
+            <AnimatePresence>
+                {selectedIndex !== null && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-4"
+                        onClick={() => setSelectedIndex(null)}
+                    >
+                        {/* Close button */}
+                        <button
+                            onClick={() => setSelectedIndex(null)}
+                            className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors p-2 z-50"
+                        >
+                            <X size={40} />
+                        </button>
+
+                        {/* Navigation Buttons */}
+                        <button
+                            onClick={handlePrev}
+                            className="absolute left-4 md:left-8 text-white/50 hover:text-white transition-colors p-4 z-50 hover:bg-white/10 rounded-full"
+                        >
+                            <ChevronLeft size={40} />
+                        </button>
+
+                        <button
+                            onClick={handleNext}
+                            className="absolute right-4 md:right-8 text-white/50 hover:text-white transition-colors p-4 z-50 hover:bg-white/10 rounded-full"
+                        >
+                            <ChevronRight size={40} />
+                        </button>
+
+                        {/* Main Image */}
+                        <motion.div
+                            layoutId={`image-${selectedIndex}`}
+                            className="relative w-full max-w-5xl aspect-[16/9] md:aspect-[3/2] rounded-lg overflow-hidden"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <Image
+                                src={images[selectedIndex].src}
+                                alt={images[selectedIndex].alt}
+                                fill
+                                className="object-contain"
+                                priority
+                                quality={100}
+                            />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </section>
     );
 }

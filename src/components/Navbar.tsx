@@ -62,10 +62,10 @@ export default function Navbar() {
                             />
                         </div>
                         <span className={clsx(
-                            "font-heading font-extrabold text-xl md:text-2xl tracking-tighter transition-colors",
+                            "font-heading font-extrabold text-xl md:text-2xl tracking-tighter transition-colors uppercase",
                             scrolled ? "text-secondary" : "text-white drop-shadow-md"
                         )}>
-                            KEMP<span className="text-primary">OFS</span>
+                            KEMP<span className="text-primary">OFS</span>USTI
                         </span>
                     </Link>
 
