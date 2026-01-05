@@ -73,13 +73,13 @@ export default function Footer() {
                             Kontakt
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <a href="tel:+420123456789" className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors group">
+                            <a href="tel:+420603985226" className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors group">
                                 <div className="p-3 bg-primary/20 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                                     <Phone size={20} />
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Zavolejte nám</p>
-                                    <p className="font-semibold text-white group-hover:text-primary transition-colors">+420 123 456 789</p>
+                                    <p className="font-semibold text-white group-hover:text-primary transition-colors">+420 603 985 226</p>
                                 </div>
                             </a>
 
@@ -113,6 +113,21 @@ export default function Footer() {
                     <p className="text-gray-500 text-sm text-center md:text-left">
                         &copy; {new Date().getFullYear()} OFS Ústí nad Labem. Všechna práva vyhrazena.
                     </p>
+
+                    {/* Portfolio Promo */}
+                    <a
+                        href="https://christianullmann.cz"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors group border border-white/5 hover:border-primary/30"
+                    >
+                        <span className="text-xs text-gray-500 font-medium uppercase tracking-wider group-hover:text-gray-300 transition-colors">
+                            Design & Code by
+                        </span>
+                        <span className="text-sm font-bold text-gray-400 group-hover:text-primary transition-colors">
+                            Christian Ullmann
+                        </span>
+                    </a>
 
                     <button
                         onClick={scrollToTop}
