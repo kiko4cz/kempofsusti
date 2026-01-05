@@ -5,6 +5,7 @@ import CampDetails from "@/components/CampDetails";
 import ParentsInfo from "@/components/ParentsInfo";
 import Gallery from "@/components/Gallery";
 import Team from "@/components/Team";
+import History from "@/components/History";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -18,6 +19,7 @@ export default function Home() {
       <ParentsInfo />
       <Gallery />
       <Team />
+      <History />
       <Contact />
       <Footer />
     </main>
