@@ -9,35 +9,84 @@ const coaches = [
         name: 'Milan Seidl',
         role: 'Manažer kempu',
         img: '/galerie/seidl_prukaz.jpg',
-        bio: 'Hlavní organizátor a duše celého projektu.',
+        bio: 'Hlavní organizátor a duše celého projektu. GTM Ústí nad Labem, šéftrenér přípravek FK VIAGEM Ústí nad Labem.',
         isPhoto: true,
         gender: 'male'
     },
     {
         name: 'Miroslav Zeman',
-        role: 'Hlavní trenér',
-        bio: 'Zkušený trenér s licencí a letitou praxí.',
+        role: 'Trenér',
+        bio: 'Zkušený kempový trenér a vedoucí, trenér okresních výběrů, šéf klubu TJ Vaňov.',
         isPhoto: false,
         gender: 'male'
     },
     {
         name: 'Barbora Fišerová',
         role: 'Trenérka',
-        bio: 'Specialistka na práci s nejmenšími talenty.',
+        bio: 'Tradiční dívčí tvář našeho kempu, trenérka a učitelka na sportovní škole.',
         isPhoto: false,
         gender: 'female'
     },
     {
-        name: 'Jaroslav Zápotocký',
+        name: 'Jiří Zápotocký',
         role: 'Trenér',
-        bio: 'Dlouholetý aktivní hráč a zapálený trenér.',
+        bio: 'Reprezentant ČR ve futsale, ligový futsalista, odchovanec kempu.',
         isPhoto: false,
         gender: 'male'
     },
     {
-        name: 'Jirka Zápotocký',
+        name: 'Jaroslav Zápotocký',
         role: 'Trenér',
-        bio: 'Motivátor a odborník na technické dovednosti.',
+        bio: 'Reprezentant ČR U21 ve futsale, ligový futsalista, odchovanec kempu.',
+        isPhoto: false,
+        gender: 'male'
+    },
+    {
+        name: 'Tobiáš Zvonek',
+        role: 'Trenér',
+        bio: 'Reprezentant ČR U15, bývalý hráč SG Dynamo Dresden, odchovanec kempu.',
+        isPhoto: false,
+        gender: 'male'
+    },
+    {
+        name: 'Jakub Prousek',
+        role: 'Lektor angličtiny',
+        bio: 'Bývalý hráč a student americké univerzity, odchovanec kempu.',
+        isPhoto: false,
+        gender: 'male'
+    },
+    {
+        name: 'Tomáš Nyári',
+        role: 'Trenér',
+        bio: 'Trenér přípravek v FK VIAGEM Ústí nad Labem, stará se o pitný režim (nejlepší barman na světě).',
+        isPhoto: false,
+        gender: 'male'
+    },
+    {
+        name: 'Jan Novotný',
+        role: 'Statistik',
+        bio: 'Každý kemp má svého chytráka a statistika, odchovanec kempu, který se také přesunul do řad trenérů.',
+        isPhoto: false,
+        gender: 'male'
+    },
+    {
+        name: 'Christian Ullmann',
+        role: 'Webmaster',
+        bio: 'Odchovanec kempu, který se také přesunul do řad trenérů.',
+        isPhoto: false,
+        gender: 'male'
+    },
+    {
+        name: 'Jakub Seidl',
+        role: 'Trenér',
+        bio: 'Bývalý profesionální hráč, trenér přípravek v FK VIAGEM Ústí nad Labem.',
+        isPhoto: false,
+        gender: 'male'
+    },
+    {
+        name: 'Samuel Peřina',
+        role: 'Trenér',
+        bio: 'Další z odchovanců kempu, který se časem přesunul do trenérské role.',
         isPhoto: false,
         gender: 'male'
     },
@@ -46,7 +95,7 @@ const coaches = [
 export default function Team() {
     return (
         <section id="team" className="py-24 bg-gray-50">
-            <div className="container mx-auto px-4">
+            <div className="w-full max-w-7xl mx-auto px-4 md:px-6">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-5xl font-black mb-4 text-secondary uppercase tracking-tight">
                         Náš <span className="text-primary">Tým</span>

@@ -57,7 +57,7 @@ export default function Gallery() {
 
     return (
         <section id="gallery" className="py-24 bg-white relative">
-            <div className="container mx-auto px-4">
+            <div className="w-full max-w-7xl mx-auto px-4 md:px-6">
                 <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
                     <div className="max-w-xl">
                         <span className="text-secondary font-bold uppercase tracking-widest text-sm mb-2 block">Vzpomínky</span>

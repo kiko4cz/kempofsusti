@@ -22,7 +22,7 @@ export default function Hero() {
             </div>
 
             {/* Content */}
-            <div className="container mx-auto px-4 z-20 pt-20">
+            <div className="w-full max-w-7xl mx-auto px-4 md:px-6 z-20 pt-20">
                 <div className="max-w-4xl">
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
@@ -75,11 +75,11 @@ export default function Hero() {
                     transition={{ delay: 0.5, duration: 0.8 }}
                     className="absolute bottom-4 left-4 right-4 md:left-auto md:right-10 md:bottom-10 md:w-auto"
                 >
-                    <div className="flex flex-row md:flex-row gap-3 md:gap-6 justify-center md:justify-start w-full">
+                    <div className="flex flex-wrap md:flex-nowrap gap-3 md:gap-6 justify-center md:justify-start w-full">
                         {/* 15 Years Card */}
-                        <div className="flex-1 md:flex-none bg-white/10 backdrop-blur-md rounded-xl md:rounded-2xl p-3 md:p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group min-w-0">
-                            <div className="flex items-center gap-2 md:gap-3 mb-0 md:mb-3 justify-center md:justify-start">
-                                <span className="text-3xl md:text-5xl font-black text-white group-hover:scale-110 transition-transform duration-300 whitespace-nowrap">15</span>
+                        <div className="flex-1 min-w-[140px] md:flex-none bg-white/10 backdrop-blur-md rounded-xl md:rounded-2xl p-2 md:p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group">
+                            <div className="flex items-center gap-1.5 md:gap-3 mb-0 md:mb-3 justify-center md:justify-start">
+                                <span className="text-2xl md:text-5xl font-black text-white group-hover:scale-110 transition-transform duration-300 whitespace-nowrap">15</span>
                                 <div className="flex flex-col justify-center border-l border-white/20 pl-2 md:pl-3 leading-none h-8 md:h-10">
                                     <span className="text-primary font-bold uppercase tracking-wider text-[10px] md:text-sm">Let</span>
                                     <span className="text-gray-300 font-bold uppercase tracking-wider text-[10px] md:text-sm">Tradice</span>
@@ -91,9 +91,9 @@ export default function Hero() {
                         </div>
 
                         {/* 100% Satisfaction Card */}
-                        <div className="flex-1 md:flex-none bg-white/10 backdrop-blur-md rounded-xl md:rounded-2xl p-3 md:p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group min-w-0">
-                            <div className="flex items-center gap-2 md:gap-3 mb-0 md:mb-3 justify-center md:justify-start">
-                                <span className="text-3xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-400 group-hover:scale-110 transition-transform duration-300 whitespace-nowrap">100%</span>
+                        <div className="flex-1 min-w-[160px] md:flex-none bg-white/10 backdrop-blur-md rounded-xl md:rounded-2xl p-2 md:p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group">
+                            <div className="flex items-center gap-1.5 md:gap-3 mb-0 md:mb-3 justify-center md:justify-start">
+                                <span className="text-2xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-400 group-hover:scale-110 transition-transform duration-300 whitespace-nowrap">100%</span>
                                 <div className="flex flex-col justify-center border-l border-white/20 pl-2 md:pl-3 leading-none h-8 md:h-10">
                                     <span className="text-white font-bold uppercase tracking-wider text-[10px] md:text-sm truncate">Spokojenost</span>
                                     <span className="text-gray-400 font-bold uppercase tracking-wider text-[10px] md:text-sm truncate">Rodičů</span>

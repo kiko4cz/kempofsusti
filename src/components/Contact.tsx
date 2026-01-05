@@ -48,13 +48,13 @@ export default function Contact() {
                                 )}
                             </button>
 
-                            <a href="tel:+420123456789" className="flex items-center gap-6 p-6 rounded-3xl bg-gray-50 border border-transparent hover:bg-white hover:shadow-xl transition-all duration-300 hover:border-gray-100 group cursor-pointer">
+                            <a href="tel:603985226" className="flex items-center gap-6 p-6 rounded-3xl bg-gray-50 border border-transparent hover:bg-white hover:shadow-xl transition-all duration-300 hover:border-gray-100 group cursor-pointer">
                                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                                     <Phone size={32} />
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-400 font-bold uppercase tracking-wider mb-1">Telefon</p>
-                                    <p className="text-xl md:text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors">+420 123 456 789</p>
+                                    <p className="text-xl md:text-2xl font-bold text-gray-900 group-hover:text-primary transition-colors">603 985 226</p>
                                 </div>
                                 <ArrowRight className="ml-auto text-gray-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                             </a>
