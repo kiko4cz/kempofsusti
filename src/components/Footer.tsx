@@ -116,7 +116,7 @@ export default function Footer() {
 
                     {/* Portfolio Promo */}
                     <a
-                        href="https://christianullmann.cz"
+                        href="https://chrisull.cz/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors group border border-white/5 hover:border-primary/30"
