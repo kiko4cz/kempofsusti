@@ -8,7 +8,7 @@ const coaches = [
     {
         name: 'Milan Seidl',
         role: 'Manažer kempu',
-        img: '/galerie/seidl_prukaz.jpg',
+        img: '/treneri/seidl_prukaz.jpg',
         bio: 'Hlavní organizátor a duše celého projektu. GTM Ústí nad Labem, šéftrenér přípravek FK VIAGEM Ústí nad Labem.',
         isPhoto: true,
         gender: 'male'
@@ -17,14 +17,16 @@ const coaches = [
         name: 'Miroslav Zeman',
         role: 'Trenér',
         bio: 'Zkušený kempový trenér a vedoucí, trenér okresních výběrů, šéf klubu TJ Vaňov.',
-        isPhoto: false,
+        img: '/treneri/miroslav_zeman.jpeg',
+        isPhoto: true,
         gender: 'male'
     },
     {
         name: 'Barbora Fišerová',
         role: 'Trenérka',
         bio: 'Tradiční dívčí tvář našeho kempu, trenérka a učitelka na sportovní škole.',
-        isPhoto: false,
+        img: '/treneri/fiserova_barbora.jpeg',
+        isPhoto: true,
         gender: 'female'
     },
     {
