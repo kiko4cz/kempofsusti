@@ -51,7 +51,7 @@ export default function ParentsInfo() {
             <div className="w-full max-w-7xl mx-auto px-4 md:px-6 relative z-10">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-5xl font-black mb-6 text-secondary uppercase tracking-tight">
-                        Pro <span className="text-primary">rodiče</span>
+                        Informace <span className="text-primary">ke kempu</span>
                     </h2>
                     <p className="text-gray-500 text-lg max-w-2xl mx-auto font-light">
                         Vše důležité na jednom místě. Odpovědi na nejčastější otázky a harmonogram dne.
