@@ -52,7 +52,7 @@ const coaches = [
     },
     {
         name: 'Jakub Prousek',
-        role: 'Lektor angličtiny',
+        role: 'Trenér',
         bio: 'Bývalý hráč a student americké univerzity, odchovanec kempu.',
         isPhoto: false,
         gender: 'male'
@@ -66,15 +66,15 @@ const coaches = [
     },
     {
         name: 'Jan Novotný',
-        role: 'Statistik',
+        role: 'Trenér',
         bio: 'Každý kemp má svého chytráka a statistika, odchovanec kempu, který se také přesunul do řad trenérů.',
         isPhoto: false,
         gender: 'male'
     },
     {
         name: 'Christian Ullmann',
-        role: 'Webmaster',
-        bio: 'Odchovanec kempu, který se také přesunul do řad trenérů.',
+        role: 'Trenér',
+        bio: 'Odchovanec kempu, který se také přesunul do řad trenérů. Tvůrce WEBu OFSÚstí.',
         isPhoto: false,
         gender: 'male'
     },
