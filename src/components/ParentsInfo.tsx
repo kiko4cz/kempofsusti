@@ -42,7 +42,7 @@ const faqs = [
 ];
 
 export default function ParentsInfo() {
-    const [openIndex, setOpenIndex] = useState<number | null>(0);
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
 
     return (
         <section id="parents" className="py-24 bg-white relative">
