@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X, Calendar, Info, Image as ImageIcon, Phone, Home } from 'lucide-react';
+import { Menu, X, Calendar, Info, Image as ImageIcon, Phone, Home, Megaphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
 const navItems = [
     { name: 'Domů', href: '/', icon: Home },
     { name: 'Kempy 2026', href: '#camps', icon: Calendar },
+    { name: 'Aktuality', href: '#parents-news', icon: Megaphone },
     { name: 'Pro rodiče', href: '#parents', icon: Info },
     { name: 'Galerie', href: '#gallery', icon: ImageIcon },
     { name: 'Kontakt', href: '#contact', icon: Phone },
