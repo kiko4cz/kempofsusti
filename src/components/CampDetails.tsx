@@ -1,16 +1,18 @@
 'use client';
 
+import React from 'react'; // Added React import
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, CheckCircle, ArrowRight } from 'lucide-react';
 
-const terms = [
+// Default terms data
+const defaultTermsTerms = [
     {
         id: 1,
         dates: '13. 7. – 17. 7. 2026',
         location: 'Areál TJ Vaňov, Brzákova 146/1',
         price: '3 000 Kč',
         features: ['Celodenní strava', 'Kempový set', 'Pitný režim'],
-        status: 'Poslední místa',
+        status: 'Obsazeno',
     },
     {
         id: 2,
@@ -18,11 +20,35 @@ const terms = [
         location: 'Areál TJ Vaňov, Brzákova 146/1',
         price: '3 000 Kč',
         features: ['Celodenní strava', 'Kempový set', 'Pitný režim'],
-        status: 'Volno',
+        status: 'Ještě otevřeno',
     },
 ];
 
 export default function CampDetails() {
+    // State for terms (allows dynamic updates from Admin Panel)
+    const [terms, setTerms] = React.useState(defaultTermsTerms);
+
+    React.useEffect(() => {
+        // Function to load terms from localStorage
+        const loadTerms = () => {
+            const saved = localStorage.getItem('camp_terms');
+            if (saved) {
+                try {
+                    setTerms(JSON.parse(saved));
+                } catch (e) {
+                    console.error('Failed to parse camp terms', e);
+                }
+            }
+        };
+
+        // Load initially
+        loadTerms();
+
+        // Listen for updates from Admin Panel
+        window.addEventListener('storage', loadTerms);
+        return () => window.removeEventListener('storage', loadTerms);
+    }, []);
+
     // Camp details section
     return (
         <section id="camps" className="py-24 bg-secondary text-white relative overflow-hidden">
@@ -50,7 +76,10 @@ export default function CampDetails() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     {terms.map((term, index) => {
-                        const isLastPlaces = term.status === 'Poslední místa';
+                        const isLastPlaces = term.status === 'Poslední místa' || term.status === 'Obsazeno';
+                        // Keep the red styling for 'Poslední místa' specifically, or adapt it.
+                        // Based on user request "only label stays red/pulsing", I will stick to that logic.
+                        const isPulsing = term.status === 'Poslední místa';
 
                         return (
                             <motion.div
@@ -62,9 +91,9 @@ export default function CampDetails() {
                                 className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 hover:border-primary/50 hover:bg-white/10 transition-all duration-300 group relative overflow-hidden flex flex-col will-change-transform"
                             >
                                 <div
-                                    className={`absolute top-0 right-0 text-white text-xs font-bold px-4 py-2 rounded-bl-2xl uppercase tracking-wider shadow-lg ${isLastPlaces
-                                            ? 'bg-red-600 animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.5)] z-20'
-                                            : 'bg-gradient-to-bl from-primary to-orange-600'
+                                    className={`absolute top-0 right-0 text-white text-xs font-bold px-4 py-2 rounded-bl-2xl uppercase tracking-wider shadow-lg ${isPulsing
+                                        ? 'bg-red-600 animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.5)] z-20'
+                                        : term.status === 'Obsazeno' ? 'bg-gray-600' : 'bg-gradient-to-bl from-primary to-orange-600'
                                         }`}
                                 >
                                     {term.status}
