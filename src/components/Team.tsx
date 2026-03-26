@@ -86,7 +86,20 @@ const defaultCoaches = [
 
 export default function Team() {
     const convexCoaches = useQuery(api.team.getTeam);
-    const coaches = convexCoaches || defaultCoaches;
+    const coaches = [...(convexCoaches || defaultCoaches)].sort((a, b) => {
+        const orderA = (a as any).order ?? 999;
+        const orderB = (b as any).order ?? 999;
+        if (orderA !== orderB) return orderA - orderB;
+        // Fallback for sorting if order is missing (e.g. initial backfill)
+        const nameOrder: Record<string, number> = {
+            'Milan Seidl': 1,
+            'Miroslav Zeman': 2,
+            'Barbora Fišerová': 3
+        };
+        const aVal = nameOrder[a.name] || 999;
+        const bVal = nameOrder[b.name] || 999;
+        return aVal - bVal;
+    });
 
     return (
         <section id="team" className="py-24 bg-gray-50">

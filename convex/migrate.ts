@@ -148,10 +148,23 @@ export const backfill = mutation({
       }
     } else {
       // Manual fix for existing members if needed
+      console.log(`Checking ${existingTeam.length} team members for order fix...`);
       for (const m of existingTeam) {
-        if (m.name.includes("Milan Seidl")) await ctx.db.patch(m._id, { order: 1 });
-        if (m.name.includes("Miroslav Zeman")) await ctx.db.patch(m._id, { order: 2 });
-        if (m.name.includes("Barbora Fišerová")) await ctx.db.patch(m._id, { order: 3 });
+        if (m.name === "Milan Seidl") {
+            console.log(`Patching Milan Seidl with order 1`);
+            await ctx.db.patch(m._id, { order: 1 });
+        } else if (m.name === "Miroslav Zeman") {
+            console.log(`Patching Miroslav Zeman with order 2`);
+            await ctx.db.patch(m._id, { order: 2 });
+        } else if (m.name === "Barbora Fišerová") {
+            console.log(`Patching Barbora Fišerová with order 3`);
+            await ctx.db.patch(m._id, { order: 3 });
+        } else {
+            // Assign order 10 to others if they don't have one
+            if (m.order === undefined) {
+                await ctx.db.patch(m._id, { order: 10 });
+            }
+        }
       }
     }
 
