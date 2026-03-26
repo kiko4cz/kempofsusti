@@ -1,9 +1,48 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
+interface ContentField {
+    key: string;
+    value: string | number;
+}
+
+interface ContentSection {
+    id: string;
+    fields: ContentField[];
+}
+
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
+
 export default function Hero() {
+    const rawContent = useQuery(api.content.getContent);
+    const [content, setContent] = useState({
+        title_line1: 'FOTBALEM',
+        title_line2: 'ZÁBAVA',
+        title_line3: 'JEN ZAČÍNÁ',
+        subtitle: 'Rodinné zázemí, přátelští trenéři a nezapomenutelné zážitky.',
+        cta_strong: 'Přidej se k naší kempové rodině.',
+        stats_years: 15,
+        stats_satisfaction: 100
+    });
+
+    useEffect(() => {
+        if (rawContent) {
+            const heroSection = rawContent.find(s => s.sectionId === 'hero');
+
+            if (heroSection) {
+                const newContent: any = { ...content };
+                heroSection.fields.forEach(field => {
+                    newContent[field.key] = field.value;
+                });
+                setContent(newContent);
+            }
+        }
+    }, [rawContent]);
+
     return (
         <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
             {/* Background Image with Enhanced Gradient Overlay */}
@@ -31,16 +70,16 @@ export default function Hero() {
                     >
                         {/* Heading */}
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-6 leading-[0.9] text-white tracking-tight">
-                            FOTBALEM <br />
+                            {content.title_line1} <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-500">
-                                ZÁBAVA
+                                {content.title_line2}
                             </span>
-                            <br />JEN ZAČÍNÁ
+                            <br />{content.title_line3}
                         </h1>
 
                         <p className="text-lg md:text-2xl text-gray-200 mb-10 max-w-2xl font-light leading-relaxed border-l-4 border-primary pl-6">
-                            Rodinné zázemí, přátelští trenéři a nezapomenutelné zážitky.
-                            <strong className="text-white block mt-2">Přidej se k naší kempové rodině.</strong>
+                            {content.subtitle}
+                            <strong className="text-white block mt-2">{content.cta_strong}</strong>
                         </p>
 
                         {/* CTA Buttons */}
@@ -76,10 +115,10 @@ export default function Hero() {
                     className="absolute bottom-4 left-4 right-4 md:left-auto md:right-10 md:bottom-10 md:w-auto"
                 >
                     <div className="flex flex-wrap md:flex-nowrap gap-3 md:gap-6 justify-center md:justify-start w-full">
-                        {/* 15 Years Card */}
+                        {/* Years Card */}
                         <div className="flex-1 min-w-[140px] md:flex-none bg-white/10 backdrop-blur-md rounded-xl md:rounded-2xl p-2 md:p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group">
                             <div className="flex items-center gap-1.5 md:gap-3 mb-0 md:mb-3 justify-center md:justify-start">
-                                <span className="text-2xl md:text-5xl font-black text-white group-hover:scale-110 transition-transform duration-300 whitespace-nowrap">15</span>
+                                <span className="text-2xl md:text-5xl font-black text-white group-hover:scale-110 transition-transform duration-300 whitespace-nowrap">{content.stats_years}</span>
                                 <div className="flex flex-col justify-center border-l border-white/20 pl-2 md:pl-3 leading-none h-8 md:h-10">
                                     <span className="text-primary font-bold uppercase tracking-wider text-[10px] md:text-sm">Let</span>
                                     <span className="text-gray-300 font-bold uppercase tracking-wider text-[10px] md:text-sm">Tradice</span>
@@ -90,10 +129,10 @@ export default function Hero() {
                             </p>
                         </div>
 
-                        {/* 100% Satisfaction Card */}
+                        {/* Satisfaction Card */}
                         <div className="flex-1 min-w-[160px] md:flex-none bg-white/10 backdrop-blur-md rounded-xl md:rounded-2xl p-2 md:p-6 border border-white/10 hover:bg-white/15 transition-all duration-300 group">
                             <div className="flex items-center gap-1.5 md:gap-3 mb-0 md:mb-3 justify-center md:justify-start">
-                                <span className="text-2xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-400 group-hover:scale-110 transition-transform duration-300 whitespace-nowrap">100%</span>
+                                <span className="text-2xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-400 group-hover:scale-110 transition-transform duration-300 whitespace-nowrap">{content.stats_satisfaction}%</span>
                                 <div className="flex flex-col justify-center border-l border-white/20 pl-2 md:pl-3 leading-none h-8 md:h-10">
                                     <span className="text-white font-bold uppercase tracking-wider text-[10px] md:text-sm truncate">Spokojenost</span>
                                     <span className="text-gray-400 font-bold uppercase tracking-wider text-[10px] md:text-sm truncate">Rodičů</span>

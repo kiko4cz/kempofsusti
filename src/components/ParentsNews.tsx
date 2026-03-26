@@ -1,119 +1,128 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Megaphone, Info, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
 
-type NewsType = 'info' | 'important' | 'alert';
+export default function ParentsNews() {
+    // State for news
+    const [news, setNews] = useState<{ id: string, title: string, date: string, content: string, active: boolean, type?: 'info' | 'important' | 'alert' }[]>([]);
 
-interface NewsItem {
-    id: number;
-    date: string;
-    title: string;
-    content: string;
-    type: NewsType;
-}
+    useEffect(() => {
+        const loadNews = () => {
+            const savedNews = localStorage.getItem('camp_news');
+            if (savedNews) {
+                const parsed = JSON.parse(savedNews);
+                setNews(parsed.filter((n: any) => n.active));
+            }
+        };
+        // Load immediately
+        loadNews();
+        // Listen for updates from Admin Panel
+        window.addEventListener('storage', loadNews);
+        return () => window.removeEventListener('storage', loadNews);
+    }, []);
 
-const newsData: NewsItem[] = [
-    {
-        id: 1,
-        date: '5. 1. 2026',
-        title: 'Spuštění registrace na letní kemp 2026',
-        content: 'Registrace na nový ročník letního kempu je nyní otevřena! Zajistěte si své místo včas. Kapacita je omezena.',
-        type: 'important'
-    },
-    {
-        id: 2,
-        date: '20. 12. 2025',
-        title: 'Vánoční prázdniny',
-        content: 'Přejeme všem klidné prožití vánočních svátků a šťastný nový rok. Těšíme se na vás v nové sezóně.',
-        type: 'info'
-    },
-    {
-        id: 3,
-        date: '10. 12. 2025',
-        title: 'Změna času odjezdu',
-        content: 'Pozor, posouvá se odjezd do Prahy na 8:00. Děkujeme za pochopení.',
-        type: 'alert'
-    }
-];
+    const hasNews = news.length > 0;
 
-const NewsCard = ({ item }: { item: NewsItem }) => {
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group"
-        >
-            <div className={clsx(
-                "absolute top-0 left-0 w-1 h-full transition-colors duration-300",
-                item.type === 'important' ? "bg-primary" :
-                    item.type === 'alert' ? "bg-orange-500" :
-                        "bg-gray-300"
-            )} />
+        <section id="parents-news" className="py-24 bg-white relative overflow-hidden">
+            {/* Decorative Background Elements */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
-            <div className="flex flex-col sm:flex-row gap-4 sm:items-start">
-                <div className="bg-gray-50 rounded-xl p-3 shrink-0 self-start text-gray-400 group-hover:text-primary transition-colors">
-                    {item.type === 'important' ? <Megaphone size={24} /> :
-                        item.type === 'alert' ? <AlertCircle size={24} /> :
-                            <Info size={24} />}
-                </div>
-
-                <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <span className="flex items-center gap-1.5 text-sm font-medium text-gray-500 bg-gray-50 px-3 py-1 rounded-full">
-                            <Calendar size={14} />
-                            {item.date}
-                        </span>
-                        {item.type === 'important' && (
-                            <span className="text-xs font-bold text-white bg-primary px-2.5 py-1 rounded-full uppercase tracking-wide">
-                                Důležité
-                            </span>
-                        )}
-                        {item.type === 'alert' && (
-                            <span className="text-xs font-bold text-white bg-orange-500 px-2.5 py-1 rounded-full uppercase tracking-wide">
-                                Upozornění
-                            </span>
-                        )}
-                    </div>
-
-                    <h3 className="text-xl font-bold text-secondary mb-2 group-hover:text-primary transition-colors">
-                        {item.title}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                        {item.content}
+            <div className="container mx-auto px-4 relative z-10">
+                <div className="text-center mb-16">
+                    <span className="text-primary font-bold uppercase tracking-widest text-sm mb-2 block">Informace</span>
+                    <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-4xl md:text-5xl font-black text-secondary mb-6 uppercase tracking-tight"
+                    >
+                        Aktuality <span className="text-primary">pro rodiče</span>
+                    </motion.h2>
+                    <p className="text-gray-500 text-lg max-w-2xl mx-auto font-light">
+                        Sledujte nejnovější informace, změny v harmonogramu a důležitá oznámení.
                     </p>
                 </div>
-            </div>
-        </motion.div>
-    );
-};
 
-export default function ParentsNews() {
-    return (
-        <section id="parents-news" className="py-24 bg-accent relative overflow-hidden">
-            {/* Background Decorations */}
-            <div className="absolute right-0 top-1/2 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+                    {hasNews ? (
+                        news.map((item, index) => {
+                            const type = item.type || 'info';
+                            return (
+                                <motion.div
+                                    key={item.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: index * 0.1 }}
+                                    className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden group"
+                                >
+                                    <div className={clsx(
+                                        "absolute top-0 left-0 w-1 h-full transition-colors duration-300",
+                                        type === 'important' ? "bg-primary" :
+                                            type === 'alert' ? "bg-orange-500" :
+                                                "bg-blue-400" // info default
+                                    )} />
 
-            <div className="w-full max-w-7xl mx-auto px-4 md:px-6 relative z-10">
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-                    <div>
-                        <h2 className="text-4xl md:text-5xl font-black mb-4 text-secondary uppercase tracking-tight">
-                            Aktuality <span className="text-primary">pro rodiče</span>
-                        </h2>
-                        <p className="text-gray-500 text-lg max-w-xl font-light">
-                            Sledujte nejnovější informace, změny v harmonogramu a důležitá oznámení.
-                        </p>
-                    </div>
-                    {/* Optional: Add a button to view archive or all news if needed in future */}
-                </div>
+                                    <div className="flex flex-col gap-4">
+                                        <div className="flex justify-between items-start">
+                                            <div className={clsx(
+                                                "rounded-xl p-3 text-gray-400 group-hover:text-primary transition-colors",
+                                                type === 'important' ? "bg-primary/5 text-primary" :
+                                                    type === 'alert' ? "bg-orange-500/5 text-orange-500" :
+                                                        "bg-gray-50"
+                                            )}>
+                                                {type === 'important' ? <Megaphone size={24} /> :
+                                                    type === 'alert' ? <AlertCircle size={24} /> :
+                                                        <Info size={24} />}
+                                            </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {newsData.map((item) => (
-                        <NewsCard key={item.id} item={item} />
-                    ))}
+                                            <div className="flex gap-2">
+                                                {type === 'important' && (
+                                                    <span className="text-[10px] font-bold text-white bg-primary px-2 py-1 rounded-full uppercase tracking-wide">
+                                                        Důležité
+                                                    </span>
+                                                )}
+                                                {type === 'alert' && (
+                                                    <span className="text-[10px] font-bold text-white bg-orange-500 px-2 py-1 rounded-full uppercase tracking-wide">
+                                                        Upozornění
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-2 text-sm text-gray-400 font-medium">
+                                            <Calendar size={14} />
+                                            {new Date(item.date).toLocaleDateString('cs-CZ')}
+                                        </div>
+
+                                        <div>
+                                            <h3 className="text-xl font-bold text-secondary mb-3 group-hover:text-primary transition-colors leading-tight">
+                                                {item.title}
+                                            </h3>
+                                            <p className="text-gray-600 leading-relaxed text-sm">
+                                                {item.content}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            );
+                        })
+                    ) : (
+                        // Default content if no news
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            className="col-span-full text-center py-12 bg-gray-50 rounded-2xl border border-gray-100 border-dashed"
+                        >
+                            <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
+                            <h3 className="text-xl font-bold text-secondary mb-2">Žádné nové zprávy</h3>
+                            <p className="text-gray-500">Momentálně nejsou žádné nové aktuality. Sledujte nás.</p>
+                        </motion.div>
+                    )}
                 </div>
             </div>
         </section>

@@ -1,14 +1,60 @@
 'use client';
 
-import { useState } from 'react';
-import { Facebook, Instagram, ShieldCheck, Phone, Mail, MapPin, ArrowUp, Check, Copy } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Facebook, Instagram, ShieldCheck, Phone, Mail, MapPin, ArrowUp, Check, Copy, Lock } from 'lucide-react';
 import Link from 'next/link';
+
+interface ContentSection {
+    id: string;
+    fields: { key: string; value: string | number }[];
+}
 
 export default function Footer() {
     const [copied, setCopied] = useState(false);
+    const [settings, setSettings] = useState({
+        contactPhone: '+420 603 985 226',
+        contactEmail: 'kempofsusti@seznam.cz'
+    });
+    const [content, setContent] = useState({
+        about_text: 'Rodinné zázemí, přátelští trenéři a nezapomenutelné zážitky. Přidej se k týmu vítězů.',
+        copyright: `© ${new Date().getFullYear()} OFS Ústí nad Labem. Všechna práva vyhrazena.`
+    });
+
+    useEffect(() => {
+        const loadData = () => {
+            // Load Settings (Phone, Email)
+            const savedSettings = localStorage.getItem('camp_settings');
+            if (savedSettings) {
+                const parsedSettings = JSON.parse(savedSettings);
+                setSettings(prev => ({
+                    ...prev,
+                    contactPhone: parsedSettings.contactPhone || prev.contactPhone,
+                    contactEmail: parsedSettings.contactEmail || prev.contactEmail
+                }));
+            }
+
+            // Load Content (Text)
+            const savedContent = localStorage.getItem('camp_content');
+            if (savedContent) {
+                const sections: ContentSection[] = JSON.parse(savedContent);
+                const footerSection = sections.find(s => s.id === 'footer');
+                if (footerSection) {
+                    const newContent: any = { ...content };
+                    footerSection.fields.forEach(field => {
+                        newContent[field.key] = field.value;
+                    });
+                    setContent(newContent);
+                }
+            }
+        };
+
+        loadData();
+        window.addEventListener('storage', loadData);
+        return () => window.removeEventListener('storage', loadData);
+    }, []);
 
     const handleCopyEmail = () => {
-        navigator.clipboard.writeText('kempofsusti@seznam.cz');
+        navigator.clipboard.writeText(settings.contactEmail);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
@@ -31,7 +77,7 @@ export default function Footer() {
                             KEMP<span className="text-primary">OFS</span>
                         </div>
                         <p className="text-gray-400 leading-relaxed font-light">
-                            Rodinné zázemí, přátelští trenéři a nezapomenutelné zážitky. Přidej se k týmu vítězů.
+                            {content.about_text}
                         </p>
                         <div className="flex gap-4">
                             <a href="https://www.facebook.com/kempofsul?locale=cs_CZ" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-white/5 hover:bg-[#1877F2] rounded-xl flex items-center justify-center transition-all duration-300 group">
@@ -73,13 +119,13 @@ export default function Footer() {
                             Kontakt
                         </h4>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <a href="tel:+420603985226" className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors group">
+                            <a href={`tel:${settings.contactPhone.replace(/\s/g, '')}`} className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-colors group">
                                 <div className="p-3 bg-primary/20 rounded-xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                                     <Phone size={20} />
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">Zavolejte nám</p>
-                                    <p className="font-semibold text-white group-hover:text-primary transition-colors">+420 603 985 226</p>
+                                    <p className="font-semibold text-white group-hover:text-primary transition-colors">{settings.contactPhone}</p>
                                 </div>
                             </a>
 
@@ -91,7 +137,7 @@ export default function Footer() {
                                     <p className={`text-xs uppercase font-bold tracking-wider mb-1 ${copied ? 'text-green-500' : 'text-gray-400'}`}>
                                         {copied ? 'Zkopírováno' : 'Napište nám (zkopírovat)'}
                                     </p>
-                                    <p className="font-semibold text-white group-hover:text-primary transition-colors break-all">kempofsusti@seznam.cz</p>
+                                    <p className="font-semibold text-white group-hover:text-primary transition-colors break-all">{settings.contactEmail}</p>
                                 </div>
                             </button>
 
@@ -110,9 +156,14 @@ export default function Footer() {
 
                 {/* Bottom Bar */}
                 <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-500 text-sm text-center md:text-left">
-                        &copy; {new Date().getFullYear()} OFS Ústí nad Labem. Všechna práva vyhrazena.
-                    </p>
+                    <div className="flex items-center gap-4">
+                        <Link href="/admin" className="text-gray-800 hover:text-white/20 transition-colors p-2">
+                            <Lock size={14} />
+                        </Link>
+                        <p className="text-gray-500 text-sm text-center md:text-left">
+                            {content.copyright}
+                        </p>
+                    </div>
 
                     {/* Portfolio Promo */}
                     <a

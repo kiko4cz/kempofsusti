@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X, Calendar, Info, Image as ImageIcon, Phone, Home, Megaphone } from 'lucide-react';
+import { Menu, X, Calendar, Info, Image as ImageIcon, Phone, Home, Megaphone, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
@@ -13,6 +13,7 @@ const navItems = [
     { name: 'Aktuality', href: '#parents-news', icon: Megaphone },
     { name: 'Pro rodiče', href: '#parents', icon: Info },
     { name: 'Galerie', href: '#gallery', icon: ImageIcon },
+    { name: 'Sponzoři', href: '#sponsors', icon: Heart },
     { name: 'Kontakt', href: '#contact', icon: Phone },
 ];
 

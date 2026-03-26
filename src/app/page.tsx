@@ -8,6 +8,7 @@ import Gallery from "@/components/Gallery";
 import Team from "@/components/Team";
 import History from "@/components/History";
 import Contact from "@/components/Contact";
+import Sponsors from "@/components/Sponsors";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
       <Team />
       <History />
       <Contact />
+      <Sponsors />
       <Footer />
     </main>
   );

@@ -1,100 +1,116 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { User, UserRound } from 'lucide-react';
 
-const coaches = [
+const defaultCoaches = [
     {
+        id: '1',
         name: 'Milan Seidl',
         role: 'Manažer kempu',
         img: '/treneri/seidl_prukaz.jpg',
         bio: 'Hlavní organizátor a duše celého projektu. GTM Ústí nad Labem, šéftrenér přípravek FK VIAGEM Ústí nad Labem.',
-        isPhoto: true,
         gender: 'male'
     },
     {
+        id: '2',
         name: 'Miroslav Zeman',
         role: 'Trenér',
         bio: 'Zkušený kempový trenér a vedoucí, trenér okresních výběrů, šéf klubu TJ Vaňov.',
         img: '/treneri/miroslav_zeman.jpeg',
-        isPhoto: true,
         gender: 'male'
     },
     {
+        id: '3',
         name: 'Barbora Fišerová',
         role: 'Trenérka',
         bio: 'Tradiční dívčí tvář našeho kempu, trenérka a učitelka na sportovní škole.',
         img: '/treneri/fiserova_barbora.jpeg',
-        isPhoto: true,
         gender: 'female'
     },
     {
+        id: '4',
         name: 'Jiří Zápotocký',
         role: 'Trenér',
         bio: 'Reprezentant ČR ve futsale, ligový futsalista, odchovanec kempu.',
-        isPhoto: false,
         gender: 'male'
     },
     {
+        id: '5',
         name: 'Jaroslav Zápotocký',
         role: 'Trenér',
         bio: 'Reprezentant ČR U21 ve futsale, ligový futsalista, odchovanec kempu.',
-        isPhoto: false,
         gender: 'male'
     },
     {
+        id: '6',
         name: 'Tobiáš Zvonek',
         role: 'Trenér',
         bio: 'Reprezentant ČR U15, bývalý hráč SG Dynamo Dresden, odchovanec kempu.',
-        isPhoto: false,
         gender: 'male'
     },
     {
+        id: '7',
         name: 'Jakub Prousek',
         role: 'Trenér',
         bio: 'Bývalý hráč a student americké univerzity, odchovanec kempu.',
-        isPhoto: false,
         gender: 'male'
     },
     {
+        id: '8',
         name: 'Tomáš Nyári',
         role: 'Trenér',
         bio: 'Trenér přípravek v FK VIAGEM Ústí nad Labem, stará se o pitný režim (nejlepší barman na světě).',
-        isPhoto: false,
         gender: 'male'
     },
     {
+        id: '9',
         name: 'Jan Novotný',
         role: 'Trenér',
         bio: 'Každý kemp má svého chytráka a statistika, odchovanec kempu, který se také přesunul do řad trenérů.',
-        isPhoto: false,
         gender: 'male'
     },
     {
+        id: '10',
         name: 'Christian Ullmann',
         role: 'Trenér',
         bio: 'Odchovanec kempu, který se také přesunul do řad trenérů. Tvůrce WEBu OFSÚstí.',
-        isPhoto: false,
         gender: 'male'
     },
     {
+        id: '11',
         name: 'Jakub Seidl',
         role: 'Trenér',
         bio: 'Bývalý profesionální hráč, trenér přípravek v FK VIAGEM Ústí nad Labem.',
-        isPhoto: false,
         gender: 'male'
     },
     {
+        id: '12',
         name: 'Samuel Peřina',
         role: 'Trenér',
         bio: 'Další z odchovanců kempu, který se časem přesunul do trenérské role.',
-        isPhoto: false,
         gender: 'male'
     },
 ];
 
 export default function Team() {
+    const [coaches, setCoaches] = useState<any[]>(defaultCoaches);
+
+    useEffect(() => {
+        const loadTeam = () => {
+            const savedTeam = localStorage.getItem('camp_team');
+            if (savedTeam) {
+                setCoaches(JSON.parse(savedTeam));
+            }
+        };
+        loadTeam();
+        window.addEventListener('storage', loadTeam);
+        return () => window.removeEventListener('storage', loadTeam);
+    }, []);
+
     return (
         <section id="team" className="py-24 bg-gray-50">
             <div className="w-full max-w-7xl mx-auto px-4 md:px-6">
@@ -118,7 +134,7 @@ export default function Team() {
                             className="bg-white rounded-[2rem] p-6 shadow-sm hover:shadow-2xl transition-all duration-300 text-center group border border-gray-100 flex flex-col items-center"
                         >
                             <div className="relative w-32 h-32 mb-6 rounded-full overflow-hidden border-4 border-gray-50 group-hover:border-primary transition-colors duration-300 shadow-inner flex items-center justify-center bg-gray-100">
-                                {coach.isPhoto && coach.img ? (
+                                {coach.img ? (
                                     <Image
                                         src={coach.img}
                                         alt={coach.name}

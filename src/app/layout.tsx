@@ -99,6 +99,8 @@ const jsonLd = {
   ],
 };
 
+import { ConvexClientProvider } from "@/components/ConvexClientProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -109,11 +111,13 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} ${inter.variable} antialiased`}
       >
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        {children}
+        <ConvexClientProvider>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+          {children}
+        </ConvexClientProvider>
       </body>
     </html>
   );
