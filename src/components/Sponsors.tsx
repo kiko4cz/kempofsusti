@@ -14,9 +14,7 @@ interface Sponsor {
 }
 
 const defaultSponsors: Sponsor[] = [
-    { id: 1, name: 'OFS Ústí nad Labem', logo: '/main-logo.jpeg', level: 'main' },
-    { id: 2, name: 'Sponsor Placeholder 1', logo: '/vercel.svg', level: 'partner' },
-    { id: 3, name: 'Sponsor Placeholder 2', logo: '/next.svg', level: 'partner' },
+    { id: 1, name: 'Panini', logo: '/panini_sponzor.jpeg', level: 'main' },
 ];
 
 export default function Sponsors() {
