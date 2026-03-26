@@ -15,6 +15,7 @@ const defaultTermsTerms = [
         status: 'Obsazeno',
     },
     {
+        _id: 'default-2',
         dates: '20. 7. – 24. 7. 2026',
         location: 'Areál TJ Vaňov, Brzákova 146/1',
         price: '3 000 Kč',
@@ -61,7 +62,7 @@ export default function CampDetails() {
 
                         return (
                             <motion.div
-                                key={term._id}
+                                key={term._id || `fallback-${index}`}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}

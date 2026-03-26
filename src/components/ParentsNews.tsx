@@ -39,7 +39,7 @@ export default function ParentsNews() {
                             const type = item.type || 'info';
                             return (
                                 <motion.div
-                                    key={item._id}
+                                    key={item._id || `news-${index}`}
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
