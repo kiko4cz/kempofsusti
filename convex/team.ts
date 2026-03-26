@@ -4,10 +4,13 @@ import { mutation, query } from "./_generated/server";
 export const getTeam = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db
-      .query("team")
-      .order("desc")
-      .collect();
+    const members = await ctx.db.query("team").collect();
+    return members.sort((a, b) => {
+      const orderA = a.order ?? 999;
+      const orderB = b.order ?? 999;
+      if (orderA !== orderB) return orderA - orderB;
+      return (b.createdAt ?? 0) - (a.createdAt ?? 0);
+    });
   },
 });
 

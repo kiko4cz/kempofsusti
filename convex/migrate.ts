@@ -40,6 +40,7 @@ export const backfill = mutation({
           img: "/treneri/seidl_prukaz.jpg",
           bio: "Hlavní organizátor a duše celého projektu. GTM Ústí nad Labem, šéftrenér přípravek FK VIAGEM Ústí nad Labem.",
           gender: "male",
+          order: 1,
           createdAt: Date.now(),
         },
         {
@@ -48,6 +49,7 @@ export const backfill = mutation({
           bio: "Zkušený kempový trenér a vedoucí, trenér okresních výběrů, šéf klubu TJ Vaňov.",
           img: "/treneri/miroslav_zeman.jpeg",
           gender: "male",
+          order: 2,
           createdAt: Date.now(),
         },
         {
@@ -56,6 +58,7 @@ export const backfill = mutation({
           bio: "Tradiční dívčí tvář našeho kempu, trenérka a učitelka na sportovní škole.",
           img: "/treneri/fiserova_barbora.jpeg",
           gender: "female",
+          order: 3,
           createdAt: Date.now(),
         },
         {
@@ -64,6 +67,7 @@ export const backfill = mutation({
           bio: "Reprezentant ČR ve futsale, ligový futsalista, odchovanec kempu.",
           img: "",
           gender: "male",
+          order: 4,
           createdAt: Date.now(),
         },
         {
@@ -72,6 +76,7 @@ export const backfill = mutation({
           bio: "Reprezentant ČR U21 ve futsale, ligový futsalista, odchovanec kempu.",
           img: "",
           gender: "male",
+          order: 5,
           createdAt: Date.now(),
         },
         {
@@ -80,6 +85,7 @@ export const backfill = mutation({
           bio: "Reprezentant ČR U15, bývalý hráč SG Dynamo Dresden, odchovanec kempu.",
           img: "",
           gender: "male",
+          order: 6,
           createdAt: Date.now(),
         },
         {
@@ -88,6 +94,7 @@ export const backfill = mutation({
           bio: "Bývalý hráč a student americké univerzity, odchovanec kempu.",
           img: "",
           gender: "male",
+          order: 7,
           createdAt: Date.now(),
         },
         {
@@ -96,6 +103,7 @@ export const backfill = mutation({
           bio: "Trenér přípravek v FK VIAGEM Ústí nad Labem, stará se o pitný režim (nejlepší barman na světě).",
           img: "",
           gender: "male",
+          order: 8,
           createdAt: Date.now(),
         },
         {
@@ -104,6 +112,7 @@ export const backfill = mutation({
           bio: "Každý kempó má svého chytráka a statistika, odchovanec kempu, který se také přesunul do řad trenérů.",
           img: "",
           gender: "male",
+          order: 9,
           createdAt: Date.now(),
         },
         {
@@ -112,6 +121,7 @@ export const backfill = mutation({
           bio: "Odchovanec kempu, který se také přesunul do řad trenérů. Tvůrce WEBu OFSÚstí.",
           img: "",
           gender: "male",
+          order: 10,
           createdAt: Date.now(),
         },
         {
@@ -120,6 +130,7 @@ export const backfill = mutation({
           bio: "Bývalý profesionální hráč, trenér přípravek v FK VIAGEM Ústí nad Labem.",
           img: "",
           gender: "male",
+          order: 11,
           createdAt: Date.now(),
         },
         {
@@ -128,11 +139,19 @@ export const backfill = mutation({
           bio: "Další z odchovanců kempu, který se časem přesunul do trenérské role.",
           img: "",
           gender: "male",
+          order: 12,
           createdAt: Date.now(),
         },
       ];
       for (const member of defaultTeam) {
         await ctx.db.insert("team", member);
+      }
+    } else {
+      // Manual fix for existing members if needed
+      for (const m of existingTeam) {
+        if (m.name.includes("Milan Seidl")) await ctx.db.patch(m._id, { order: 1 });
+        if (m.name.includes("Miroslav Zeman")) await ctx.db.patch(m._id, { order: 2 });
+        if (m.name.includes("Barbora Fišerová")) await ctx.db.patch(m._id, { order: 3 });
       }
     }
 
