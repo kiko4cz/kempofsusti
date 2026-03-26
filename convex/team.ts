@@ -55,3 +55,16 @@ export const deleteMember = mutation({
     await ctx.db.delete(args.id);
   },
 });
+
+export const fixOrder = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const members = await ctx.db.query("team").collect();
+    for (const m of members) {
+      if (m.name === "Milan Seidl") await ctx.db.patch(m._id, { order: 1 });
+      else if (m.name === "Miroslav Zeman") await ctx.db.patch(m._id, { order: 2 });
+      else if (m.name === "Barbora Fišerová") await ctx.db.patch(m._id, { order: 3 });
+      else await ctx.db.patch(m._id, { order: 10 }); // Others
+    }
+  },
+});
