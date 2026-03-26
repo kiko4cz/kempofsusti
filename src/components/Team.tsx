@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { User, UserRound } from 'lucide-react';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
 const defaultCoaches = [
     {
-        id: '1',
         name: 'Milan Seidl',
         role: 'Manažer kempu',
         img: '/treneri/seidl_prukaz.jpg',
@@ -16,7 +15,6 @@ const defaultCoaches = [
         gender: 'male'
     },
     {
-        id: '2',
         name: 'Miroslav Zeman',
         role: 'Trenér',
         bio: 'Zkušený kempový trenér a vedoucí, trenér okresních výběrů, šéf klubu TJ Vaňov.',
@@ -24,7 +22,6 @@ const defaultCoaches = [
         gender: 'male'
     },
     {
-        id: '3',
         name: 'Barbora Fišerová',
         role: 'Trenérka',
         bio: 'Tradiční dívčí tvář našeho kempu, trenérka a učitelka na sportovní škole.',
@@ -32,63 +29,54 @@ const defaultCoaches = [
         gender: 'female'
     },
     {
-        id: '4',
         name: 'Jiří Zápotocký',
         role: 'Trenér',
         bio: 'Reprezentant ČR ve futsale, ligový futsalista, odchovanec kempu.',
         gender: 'male'
     },
     {
-        id: '5',
         name: 'Jaroslav Zápotocký',
         role: 'Trenér',
         bio: 'Reprezentant ČR U21 ve futsale, ligový futsalista, odchovanec kempu.',
         gender: 'male'
     },
     {
-        id: '6',
         name: 'Tobiáš Zvonek',
         role: 'Trenér',
         bio: 'Reprezentant ČR U15, bývalý hráč SG Dynamo Dresden, odchovanec kempu.',
         gender: 'male'
     },
     {
-        id: '7',
         name: 'Jakub Prousek',
         role: 'Trenér',
         bio: 'Bývalý hráč a student americké univerzity, odchovanec kempu.',
         gender: 'male'
     },
     {
-        id: '8',
         name: 'Tomáš Nyári',
         role: 'Trenér',
         bio: 'Trenér přípravek v FK VIAGEM Ústí nad Labem, stará se o pitný režim (nejlepší barman na světě).',
         gender: 'male'
     },
     {
-        id: '9',
         name: 'Jan Novotný',
         role: 'Trenér',
         bio: 'Každý kemp má svého chytráka a statistika, odchovanec kempu, který se také přesunul do řad trenérů.',
         gender: 'male'
     },
     {
-        id: '10',
         name: 'Christian Ullmann',
         role: 'Trenér',
         bio: 'Odchovanec kempu, který se také přesunul do řad trenérů. Tvůrce WEBu OFSÚstí.',
         gender: 'male'
     },
     {
-        id: '11',
         name: 'Jakub Seidl',
         role: 'Trenér',
         bio: 'Bývalý profesionální hráč, trenér přípravek v FK VIAGEM Ústí nad Labem.',
         gender: 'male'
     },
     {
-        id: '12',
         name: 'Samuel Peřina',
         role: 'Trenér',
         bio: 'Další z odchovanců kempu, který se časem přesunul do trenérské role.',
@@ -97,19 +85,8 @@ const defaultCoaches = [
 ];
 
 export default function Team() {
-    const [coaches, setCoaches] = useState<any[]>(defaultCoaches);
-
-    useEffect(() => {
-        const loadTeam = () => {
-            const savedTeam = localStorage.getItem('camp_team');
-            if (savedTeam) {
-                setCoaches(JSON.parse(savedTeam));
-            }
-        };
-        loadTeam();
-        window.addEventListener('storage', loadTeam);
-        return () => window.removeEventListener('storage', loadTeam);
-    }, []);
+    const convexCoaches = useQuery(api.team.getTeam);
+    const coaches = convexCoaches || defaultCoaches;
 
     return (
         <section id="team" className="py-24 bg-gray-50">

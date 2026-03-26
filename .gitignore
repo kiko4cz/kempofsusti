@@ -41,5 +41,5 @@ yarn-error.log*
 next-env.d.ts
 
 # convex
-convex/_generated
+# (we include _generated for easier build/deployment if not using CI env vars)
 .convex

@@ -3,55 +3,43 @@
 import { useState, useEffect } from 'react';
 import { Facebook, Instagram, ShieldCheck, Phone, Mail, MapPin, ArrowUp, Check, Copy, Lock } from 'lucide-react';
 import Link from 'next/link';
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 interface ContentSection {
-    id: string;
+    sectionId: string;
     fields: { key: string; value: string | number }[];
 }
 
 export default function Footer() {
     const [copied, setCopied] = useState(false);
-    const [settings, setSettings] = useState({
-        contactPhone: '+420 603 985 226',
-        contactEmail: 'kempofsusti@seznam.cz'
-    });
+
+    // Fetch site-wide settings (phone, email)
+    const convexSettings = useQuery(api.settings.getSettings);
+    const settings = {
+        contactPhone: convexSettings?.contactPhone || '+420 603 985 226',
+        contactEmail: convexSettings?.contactEmail || 'kempofsusti@seznam.cz'
+    };
+
+    // Fetch footer content (about text, copyright)
+    const rawContent = useQuery(api.content.getContent);
     const [content, setContent] = useState({
         about_text: 'Rodinné zázemí, přátelští trenéři a nezapomenutelné zážitky. Přidej se k týmu vítězů.',
         copyright: `© ${new Date().getFullYear()} OFS Ústí nad Labem. Všechna práva vyhrazena.`
     });
 
     useEffect(() => {
-        const loadData = () => {
-            // Load Settings (Phone, Email)
-            const savedSettings = localStorage.getItem('camp_settings');
-            if (savedSettings) {
-                const parsedSettings = JSON.parse(savedSettings);
-                setSettings(prev => ({
-                    ...prev,
-                    contactPhone: parsedSettings.contactPhone || prev.contactPhone,
-                    contactEmail: parsedSettings.contactEmail || prev.contactEmail
-                }));
+        if (rawContent) {
+            const footerSection = rawContent.find(s => s.sectionId === 'footer');
+            if (footerSection) {
+                const newContent: any = { ...content };
+                footerSection.fields.forEach(field => {
+                    newContent[field.key] = field.value;
+                });
+                setContent(newContent);
             }
-
-            // Load Content (Text)
-            const savedContent = localStorage.getItem('camp_content');
-            if (savedContent) {
-                const sections: ContentSection[] = JSON.parse(savedContent);
-                const footerSection = sections.find(s => s.id === 'footer');
-                if (footerSection) {
-                    const newContent: any = { ...content };
-                    footerSection.fields.forEach(field => {
-                        newContent[field.key] = field.value;
-                    });
-                    setContent(newContent);
-                }
-            }
-        };
-
-        loadData();
-        window.addEventListener('storage', loadData);
-        return () => window.removeEventListener('storage', loadData);
-    }, []);
+        }
+    }, [rawContent]);
 
     const handleCopyEmail = () => {
         navigator.clipboard.writeText(settings.contactEmail);

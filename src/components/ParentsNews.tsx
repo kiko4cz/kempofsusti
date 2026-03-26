@@ -1,28 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Megaphone, Info, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
 export default function ParentsNews() {
-    // State for news
-    const [news, setNews] = useState<{ id: string, title: string, date: string, content: string, active: boolean, type?: 'info' | 'important' | 'alert' }[]>([]);
-
-    useEffect(() => {
-        const loadNews = () => {
-            const savedNews = localStorage.getItem('camp_news');
-            if (savedNews) {
-                const parsed = JSON.parse(savedNews);
-                setNews(parsed.filter((n: any) => n.active));
-            }
-        };
-        // Load immediately
-        loadNews();
-        // Listen for updates from Admin Panel
-        window.addEventListener('storage', loadNews);
-        return () => window.removeEventListener('storage', loadNews);
-    }, []);
+    const convexNews = useQuery(api.news.getNews);
+    const news = convexNews?.filter((n: any) => n.active) || [];
 
     const hasNews = news.length > 0;
 
@@ -53,7 +39,7 @@ export default function ParentsNews() {
                             const type = item.type || 'info';
                             return (
                                 <motion.div
-                                    key={item.id}
+                                    key={item._id}
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}

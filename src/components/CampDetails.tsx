@@ -1,13 +1,13 @@
 'use client';
 
-import React from 'react'; // Added React import
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, CheckCircle, ArrowRight } from 'lucide-react';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
-// Default terms data
 const defaultTermsTerms = [
     {
-        id: 1,
+        _id: 'default-1',
         dates: '13. 7. – 17. 7. 2026',
         location: 'Areál TJ Vaňov, Brzákova 146/1',
         price: '3 000 Kč',
@@ -15,7 +15,6 @@ const defaultTermsTerms = [
         status: 'Obsazeno',
     },
     {
-        id: 2,
         dates: '20. 7. – 24. 7. 2026',
         location: 'Areál TJ Vaňov, Brzákova 146/1',
         price: '3 000 Kč',
@@ -25,29 +24,8 @@ const defaultTermsTerms = [
 ];
 
 export default function CampDetails() {
-    // State for terms (allows dynamic updates from Admin Panel)
-    const [terms, setTerms] = React.useState(defaultTermsTerms);
-
-    React.useEffect(() => {
-        // Function to load terms from localStorage
-        const loadTerms = () => {
-            const saved = localStorage.getItem('camp_terms');
-            if (saved) {
-                try {
-                    setTerms(JSON.parse(saved));
-                } catch (e) {
-                    console.error('Failed to parse camp terms', e);
-                }
-            }
-        };
-
-        // Load initially
-        loadTerms();
-
-        // Listen for updates from Admin Panel
-        window.addEventListener('storage', loadTerms);
-        return () => window.removeEventListener('storage', loadTerms);
-    }, []);
+    const convexCamps = useQuery(api.camps.getCamps);
+    const terms = convexCamps || defaultTermsTerms;
 
     // Camp details section
     return (
@@ -83,7 +61,7 @@ export default function CampDetails() {
 
                         return (
                             <motion.div
-                                key={term.id}
+                                key={term._id}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -104,7 +82,7 @@ export default function CampDetails() {
                                         <Calendar size={32} />
                                     </div>
                                     <div>
-                                        <h3 className="text-3xl font-bold text-white mb-2">Turnus #{term.id}</h3>
+                                        <h3 className="text-3xl font-bold text-white mb-2">Turnus #{term._id?.toString().slice(-1) || index + 1}</h3>
                                         <p className="text-gray-300 flex items-center gap-2">
                                             <span className="font-mono text-xl text-primary font-bold tracking-tight">{term.dates}</span>
                                         </p>
