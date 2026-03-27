@@ -80,12 +80,30 @@ export const backfill = mutation({
           createdAt: Date.now(),
         },
         {
+          name: "Tomáš Nyári",
+          role: "Trenér",
+          bio: "Trenér přípravek v FK VIAGEM Ústí nad Labem, stará se o pitný režim (nejlepší barman na světě).",
+          img: "",
+          gender: "male",
+          order: 6,
+          createdAt: Date.now(),
+        },
+        {
+          name: "Jakub Seidl",
+          role: "Trenér",
+          bio: "Bývalý profesionální hráč, trenér přípravek v FK VIAGEM Ústí nad Labem.",
+          img: "",
+          gender: "male",
+          order: 7,
+          createdAt: Date.now(),
+        },
+        {
           name: "Tobiáš Zvonek",
           role: "Trenér",
           bio: "Reprezentant ČR U15, bývalý hráč SG Dynamo Dresden, odchovanec kempu.",
           img: "",
           gender: "male",
-          order: 6,
+          order: 8,
           createdAt: Date.now(),
         },
         {
@@ -94,16 +112,7 @@ export const backfill = mutation({
           bio: "Bývalý hráč a student americké univerzity, odchovanec kempu.",
           img: "",
           gender: "male",
-          order: 7,
-          createdAt: Date.now(),
-        },
-        {
-          name: "Tomáš Nyári",
-          role: "Trenér",
-          bio: "Trenér přípravek v FK VIAGEM Ústí nad Labem, stará se o pitný režim (nejlepší barman na světě).",
-          img: "",
-          gender: "male",
-          order: 8,
+          order: 9,
           createdAt: Date.now(),
         },
         {
@@ -112,22 +121,13 @@ export const backfill = mutation({
           bio: "Každý kempó má svého chytráka a statistika, odchovanec kempu, který se také přesunul do řad trenérů.",
           img: "",
           gender: "male",
-          order: 9,
+          order: 10,
           createdAt: Date.now(),
         },
         {
           name: "Christian Ullmann",
           role: "Trenér",
           bio: "Odchovanec kempu, který se také přesunul do řad trenérů. Tvůrce WEBu OFSÚstí.",
-          img: "",
-          gender: "male",
-          order: 10,
-          createdAt: Date.now(),
-        },
-        {
-          name: "Jakub Seidl",
-          role: "Trenér",
-          bio: "Bývalý profesionální hráč, trenér přípravek v FK VIAGEM Ústí nad Labem.",
           img: "",
           gender: "male",
           order: 11,
@@ -159,9 +159,21 @@ export const backfill = mutation({
         } else if (m.name === "Barbora Fišerová") {
             console.log(`Patching Barbora Fišerová with order 3`);
             await ctx.db.patch(m._id, { order: 3 });
+        } else if (m.name === "Jiří Zápotocký") {
+            console.log(`Patching Jiří Zápotocký with order 4`);
+            await ctx.db.patch(m._id, { order: 4 });
+        } else if (m.name === "Jaroslav Zápotocký") {
+            console.log(`Patching Jaroslav Zápotocký with order 5`);
+            await ctx.db.patch(m._id, { order: 5 });
+        } else if (m.name === "Tomáš Nyári") {
+            console.log(`Patching Tomáš Nyári with order 6`);
+            await ctx.db.patch(m._id, { order: 6 });
+        } else if (m.name === "Jakub Seidl") {
+            console.log(`Patching Jakub Seidl with order 7`);
+            await ctx.db.patch(m._id, { order: 7 });
         } else {
-            // Assign order 10 to others if they don't have one
-            if (m.order === undefined) {
+            // Assign order 10+ to others
+            if (m.order === undefined || m.order < 8) {
                 await ctx.db.patch(m._id, { order: 10 });
             }
         }

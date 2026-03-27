@@ -94,7 +94,11 @@ export default function Team() {
         const nameOrder: Record<string, number> = {
             'Milan Seidl': 1,
             'Miroslav Zeman': 2,
-            'Barbora Fišerová': 3
+            'Barbora Fišerová': 3,
+            'Jiří Zápotocký': 4,
+            'Jaroslav Zápotocký': 5,
+            'Tomáš Nyári': 6,
+            'Jakub Seidl': 7
         };
         const aVal = nameOrder[a.name] || 999;
         const bVal = nameOrder[b.name] || 999;
