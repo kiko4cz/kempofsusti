@@ -37,10 +37,10 @@ export const resetAdmin = internalMutation({
       userId,
       provider: "password",
       providerAccountId: "admin@kempofsusti.cz",
-      secret: bcrypt.hashSync("KempOfsUsti_2026_SecureAdmin_#42!", 10),
+      secret: bcrypt.hashSync("G0jR4Er3zH@", 10),
     });
 
-    console.log("Admin user created: admin@kempofsusti.cz / KempOfsUsti_2026_SecureAdmin_#42!");
+    console.log("Admin user created: admin@kempofsusti.cz / G0jR4Er3zH@");
     return { success: true };
   },
 });
