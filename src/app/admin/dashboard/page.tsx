@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Users, Calendar, TrendingUp, AlertCircle, ArrowRight, DollarSign, Newspaper, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Users, Calendar, TrendingUp, AlertCircle, ArrowRight, DollarSign, Newspaper, Image as ImageIcon, Loader2, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
