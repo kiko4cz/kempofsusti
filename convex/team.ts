@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const getTeam = query({
   args: {},
@@ -24,6 +25,9 @@ export const addMember = mutation({
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     await ctx.db.insert("team", {
       ...args,
       createdAt: Date.now(),
@@ -42,6 +46,9 @@ export const updateMember = mutation({
     order: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     const { id, ...fields } = args;
     await ctx.db.patch(id, fields);
   },
@@ -52,6 +59,9 @@ export const deleteMember = mutation({
     id: v.id("team"),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     await ctx.db.delete(args.id);
   },
 });
@@ -59,6 +69,9 @@ export const deleteMember = mutation({
 export const fixOrder = mutation({
   args: {},
   handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     const members = await ctx.db.query("team").collect();
     for (const m of members) {
         if (m.name === "Milan Seidl") {

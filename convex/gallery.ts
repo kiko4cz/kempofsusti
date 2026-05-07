@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const getImages = query({
   args: {},
@@ -18,6 +19,9 @@ export const addImage = mutation({
     alt: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     const { url, publicId, alt } = args;
     await ctx.db.insert("gallery", {
       url,
@@ -33,6 +37,9 @@ export const deleteImage = mutation({
     id: v.id("gallery"),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     await ctx.db.delete(args.id);
   },
 });

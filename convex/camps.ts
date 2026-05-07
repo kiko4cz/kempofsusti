@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const getCamps = query({
   args: {},
@@ -20,6 +21,9 @@ export const addCamp = mutation({
     features: v.array(v.string()),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     await ctx.db.insert("camps", {
       ...args,
       createdAt: Date.now(),
@@ -37,6 +41,9 @@ export const updateCamp = mutation({
     features: v.array(v.string()),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     const { id, ...fields } = args;
     await ctx.db.patch(id, fields);
   },
@@ -47,6 +54,9 @@ export const deleteCamp = mutation({
     id: v.id("camps"),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     await ctx.db.delete(args.id);
   },
 });

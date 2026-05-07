@@ -70,11 +70,8 @@ export default function AdminLayout({
             <Toaster position="top-right" richColors theme="light" closeButton />
 
             {isLoginPage ? (
-                <div className="flex items-center justify-center min-h-screen relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-full admin-mesh-bg opacity-50"></div>
-                    <div className="relative z-10 w-full max-w-md px-4">
-                        {children}
-                    </div>
+                <div className="min-h-screen w-full">
+                    {children}
                 </div>
             ) : isAuthenticated ? (
                 <div className="flex h-screen overflow-hidden">

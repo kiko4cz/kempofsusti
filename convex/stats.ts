@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 export const getStats = query({
   args: {},
@@ -26,6 +27,9 @@ export const updateYearStats = mutation({
     })),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     const existing = await ctx.db
       .query("stats")
       .filter((q) => q.eq(q.field("year"), args.year))
@@ -50,6 +54,9 @@ export const deleteYear = mutation({
     year: v.number(),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Unauthorized");
+
     const existing = await ctx.db
       .query("stats")
       .filter((q) => q.eq(q.field("year"), args.year))

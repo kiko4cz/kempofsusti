@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, Loader2 } from 'lucide-react';
+import { Lock, Mail, Loader2, ArrowRight, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { useConvexAuth } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { toast } from "sonner";
+import { motion } from 'framer-motion';
 
 export default function AdminLogin() {
     const [email, setEmail] = useState('');
@@ -15,11 +16,12 @@ export default function AdminLogin() {
     const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
     const { signIn } = useAuthActions();
 
-    // Reactive redirect: Wait for isAuthenticated to become true before pushing the route
     useEffect(() => {
         if (isAuthenticated && !authLoading) {
-            console.log("Authenticated! Redirecting to dashboard...");
-            toast.success("Přihlášení úspěšné!");
+            toast.success("Přihlášení úspěšné", {
+                description: "Vítejte zpět v administraci.",
+                style: { background: '#10b981', color: '#fff', border: 'none' }
+            });
             router.push('/admin/dashboard');
         }
     }, [isAuthenticated, authLoading, router]);
@@ -29,81 +31,115 @@ export default function AdminLogin() {
         setLoading(true);
 
         try {
-            console.log("Attempting signIn with:", email);
             await signIn("password", { email, password, flow: "signIn" });
-            // Redirection is handled by the useEffect above
         } catch (err) {
             console.error("Login failed:", err);
-            toast.error("Nesprávný email nebo heslo");
+            toast.error("Přístup odepřen", {
+                description: "Nesprávné přihlašovací údaje.",
+                icon: <ShieldAlert className="text-white" size={18} />,
+                style: { background: '#ef4444', color: '#fff', border: 'none' }
+            });
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
-            <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl w-full max-w-md relative overflow-hidden">
-                {/* Background effects */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-[50px] pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-500/10 rounded-full blur-[50px] pointer-events-none"></div>
+        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-6 relative overflow-hidden font-sans">
+            {/* High-Contrast Professional Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#111] to-[#0a0a0a]"></div>
+            
+            {/* Subtle Animated Accents */}
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.15 }}
+                transition={{ duration: 2 }}
+                className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-primary rounded-full blur-[150px] pointer-events-none"
+            ></motion.div>
+            <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-blue-900/20 rounded-full blur-[150px] pointer-events-none"></div>
 
-                <div className="relative z-10">
-                    <div className="text-center mb-10">
-                        <div className="bg-white/10 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 transform rotate-3">
-                            <Lock className="text-primary" size={32} />
+            {/* Grid Pattern Overlay for Texture */}
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-[0.1] pointer-events-none"></div>
+
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="w-full max-w-[420px] relative z-10"
+            >
+                <div className="bg-[#161616] border border-white/10 p-10 rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] relative overflow-hidden">
+                    {/* Glossy overlay effect */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.02] to-transparent pointer-events-none"></div>
+                    
+                    {/* Header */}
+                    <div className="text-center mb-10 relative">
+                        <div className="inline-flex items-center justify-center p-5 bg-white/5 rounded-3xl mb-6 border border-white/10 shadow-inner">
+                            <ShieldCheck className="text-primary" size={42} />
                         </div>
-                        <h1 className="text-3xl font-bold text-white mb-2">Administrace</h1>
-                        <p className="text-gray-400">Přihlaste se pro správu webu</p>
+                        <h1 className="text-4xl font-black text-white mb-3 tracking-tight uppercase">Administrace</h1>
+                        <div className="h-1 w-12 bg-primary mx-auto mb-4 rounded-full"></div>
+                        <p className="text-gray-400 font-bold text-sm tracking-wide">OFS Ústí nad Labem</p>
                     </div>
 
-                    <form onSubmit={handleLogin} className="space-y-6">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <form onSubmit={handleLogin} className="space-y-6 relative">
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">Emailová adresa</label>
                             <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
                                 <input
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-colors"
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200"
                                     placeholder="admin@kempofsusti.cz"
                                     required
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-300 mb-2">Heslo</label>
+                        <div className="space-y-2">
+                            <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">Přístupové heslo</label>
                             <div className="relative">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
                                 <input
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 transition-colors"
-                                    placeholder="••••••••"
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-200"
+                                    placeholder="••••••••••••"
                                     required
                                 />
                             </div>
                         </div>
 
-
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.02, backgroundColor: '#c52222' }}
+                            whileTap={{ scale: 0.98 }}
                             type="submit"
                             disabled={loading || (isAuthenticated && !authLoading)}
-                            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="w-full bg-primary text-white font-black py-5 rounded-2xl transition-all duration-200 shadow-xl shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 overflow-hidden relative group"
                         >
                             {(loading || (isAuthenticated && !authLoading)) ? (
                                 <>
-                                    <Loader2 className="animate-spin" size={20} />
-                                    {isAuthenticated ? 'Přesměrování...' : 'Přihlašování...'}
+                                    <Loader2 className="animate-spin" size={22} />
+                                    <span className="tracking-widest uppercase text-xs">Ověřování...</span>
                                 </>
                             ) : (
-                                'Přihlásit se'
+                                <>
+                                    <span className="tracking-widest uppercase text-xs">Vstoupit do správy</span>
+                                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                                </>
                             )}
-                        </button>
+                        </motion.button>
                     </form>
                 </div>
-            </div>
+
+                {/* Footer info */}
+                <div className="mt-10 text-center">
+                    <p className="text-gray-600 text-xs font-bold uppercase tracking-[0.2em]">
+                        &copy; {new Date().getFullYear()} OFS Ústí nad Labem
+                    </p>
+                </div>
+            </motion.div>
         </div>
     );
 }

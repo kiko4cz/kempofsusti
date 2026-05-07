@@ -235,6 +235,12 @@ export default function AdminDashboard() {
                                 </div>
                                 <span className="text-sm font-bold text-slate-500 group-hover:text-green-600 transition-colors">Galarie</span>
                             </Link>
+                            <Link href="/admin/settings" className="p-6 bg-white/50 hover:bg-red-500/5 border border-slate-200 hover:border-red-500/30 rounded-[2rem] text-center transition-all duration-500 group">
+                                <div className="w-14 h-14 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+                                    <Lock className="text-red-500" size={28} />
+                                </div>
+                                <span className="text-sm font-bold text-slate-500 group-hover:text-red-600 transition-colors">Nastavení</span>
+                            </Link>
                             <Link href="/" target="_blank" className="p-6 bg-white/50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-[2rem] text-center transition-all duration-500 group">
                                 <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-500">
                                     <ArrowRight className="text-slate-400 group-hover:text-slate-900" size={28} />
