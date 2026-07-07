@@ -20,11 +20,14 @@ import { api } from "../../convex/_generated/api";
 export default function Hero() {
     const rawContent = useQuery(api.content.getContent);
     const [content, setContent] = useState({
+        bg_image: '/main-bg.jpg',
         title_line1: 'FOTBALEM',
         title_line2: 'ZÁBAVA',
         title_line3: 'JEN ZAČÍNÁ',
         subtitle: 'Rodinné zázemí, přátelští trenéři a nezapomenutelné zážitky.',
         cta_strong: 'Přidej se k naší kempové rodině.',
+        btn_primary: 'KONTAKT',
+        btn_secondary: 'ZJISTIT VÍCE',
         stats_years: 15,
         stats_satisfaction: 100
     });
@@ -55,7 +58,7 @@ export default function Hero() {
                 <div
                     className="w-full h-full bg-cover bg-center bg-no-repeat animate-subtle-zoom"
                     style={{
-                        backgroundImage: 'url("/main-bg.jpg")',
+                        backgroundImage: `url("${content.bg_image}")`,
                     }}
                 />
             </div>
@@ -90,7 +93,7 @@ export default function Hero() {
                             >
                                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
                                 <span className="relative flex items-center gap-2">
-                                    KONTAKTOVAT NÁS
+                                    {content.btn_primary}
                                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                                     </svg>
@@ -101,7 +104,7 @@ export default function Hero() {
                                 href="#camps"
                                 className="px-8 py-4 bg-white/5 backdrop-blur-sm border border-white/20 text-white text-lg font-bold rounded-xl hover:bg-white/10 transition-all hover:border-white/40"
                             >
-                                ZJISTIT VÍCE
+                                {content.btn_secondary}
                             </Link>
                         </div>
                     </motion.div>

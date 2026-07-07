@@ -4,28 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Heart, Trophy, Bus } from 'lucide-react';
 
-const features = [
-    {
-        icon: Heart,
-        title: 'Dětská spokojenost',
-        description: 'Priorita č. 1. Chceme, aby si děti kemp užily a měly na co vzpomínat celý rok.',
-    },
-    {
-        icon: Users,
-        title: 'Nová přátelství',
-        description: 'Nejen fotbal, ale i budování týmu a poznávání nových kamarádů z okolí.',
-    },
-    {
-        icon: Trophy,
-        title: 'Soutěže a hry',
-        description: 'Pestrý program plný soutěží, her a překvapení pro každého účastníka.',
-    },
-    {
-        icon: Bus,
-        title: 'Celodenní výlet',
-        description: 'Výlety za fotbalovými zážitky na velké stadiony či setkání s osobnostmi.',
-    },
-];
+const featureIcons = [Heart, Users, Trophy, Bus];
 
 interface ContentSection {
     id: string;
@@ -40,7 +19,15 @@ export default function About() {
     const [content, setContent] = useState({
         section_title: 'O NÁS',
         main_heading: 'VÍCE NEŽ JEN FOTBAL',
-        description: 'Tým trenérů, pro které je prioritou dětská spokojenost. Naše kempy Vám neudělají během 5 dní z Vašich ratolestí profesionální fotbalisty, ale zaručí nová přátelství, zážitky a radost ze sportování.'
+        description: 'Tým trenérů, pro které je prioritou dětská spokojenost. Naše kempy Vám neudělají během 5 dní z Vašich ratolestí profesionální fotbalisty, ale zaručí nová přátelství, zážitky a radost ze sportování.',
+        feat1_title: 'Dětská spokojenost',
+        feat1_desc: 'Priorita č. 1. Chceme, aby si děti kemp užily a měly na co vzpomínat celý rok.',
+        feat2_title: 'Nová přátelství',
+        feat2_desc: 'Nejen fotbal, ale i budování týmu a poznávání nových kamarádů z okolí.',
+        feat3_title: 'Soutěže a hry',
+        feat3_desc: 'Pestrý program plný soutěží, her a překvapení pro každého účastníka.',
+        feat4_title: 'Celodenní výlet',
+        feat4_desc: 'Výlety za fotbalovými zážitky na velké stadiony či setkání s osobnostmi.',
     });
 
     useEffect(() => {
@@ -96,7 +83,12 @@ export default function About() {
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {features.map((feature, index) => (
+                    {[
+                        { title: content.feat1_title, desc: content.feat1_desc, icon: featureIcons[0] },
+                        { title: content.feat2_title, desc: content.feat2_desc, icon: featureIcons[1] },
+                        { title: content.feat3_title, desc: content.feat3_desc, icon: featureIcons[2] },
+                        { title: content.feat4_title, desc: content.feat4_desc, icon: featureIcons[3] },
+                    ].map((feature, index) => (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, y: 30 }}
@@ -109,7 +101,7 @@ export default function About() {
                                 <feature.icon size={32} />
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary transition-colors">{feature.title}</h3>
-                            <p className="text-gray-500 leading-relaxed">{feature.description}</p>
+                            <p className="text-gray-500 leading-relaxed">{feature.desc}</p>
                         </motion.div>
                     ))}
                 </div>

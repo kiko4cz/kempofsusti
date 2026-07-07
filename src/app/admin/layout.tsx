@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Users, Calendar, LayoutDashboard, Settings, LogOut, X, Menu, BarChart, FileText, Loader2, Newspaper, Image as ImageIcon } from 'lucide-react';
+import { Users, Calendar, LayoutDashboard, Settings, LogOut, X, Menu, BarChart, FileText, Loader2, Newspaper, Image as ImageIcon, Heart, History } from 'lucide-react';
 import { useConvexAuth, useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "../../../convex/_generated/api";
@@ -59,9 +59,11 @@ export default function AdminLayout({
         { name: 'Tým', href: '/admin/team', icon: Users },
         { name: 'Obsah webu', href: '/admin/content', icon: FileText },
         { name: 'Turnusy', href: '/admin/camps', icon: Calendar },
+        { name: 'Sponzoři', href: '/admin/sponsors', icon: Heart },
         { name: 'Statistiky', href: '/admin/stats', icon: BarChart },
         { name: 'Pro rodiče', href: '/admin/news', icon: Newspaper },
         { name: 'Galerie', href: '/admin/gallery', icon: ImageIcon },
+        { name: 'Historie', href: '/admin/history', icon: History },
         { name: 'Nastavení', href: '/admin/settings', icon: Settings },
     ];
 

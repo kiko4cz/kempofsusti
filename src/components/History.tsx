@@ -1,38 +1,53 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import { useState, useEffect, useMemo } from 'react';
 
 export default function History() {
+    const rawContent = useQuery(api.content.getContent);
+    const [content, setContent] = useState({
+        section_title_small: 'Tradice',
+        section_title_main: 'HISTORIE KEMPU',
+        json_timeline: '[{"year":"2026","loc":"Vaňov, Vaňov"},{"year":"2025","loc":"Přestanov, Vaňov"},{"year":"2024","loc":"Povrly"},{"year":"2023","loc":"Povrly"},{"year":"2022","loc":"Povrly"},{"year":"2021","loc":"Povrly"},{"year":"2020","loc":"Střekov"},{"year":"2019","loc":"Povrly"},{"year":"2018","loc":"Ústí nad Labem"},{"year":"2017","loc":"Svádov, Povrly"},{"year":"2016","loc":"Chlumec"},{"year":"2015","loc":"Povrly"},{"year":"2014","loc":"Chabařovice"},{"year":"2013","loc":"Ústí nad Labem"},{"year":"2012","loc":"Ústí nad Labem"}]'
+    });
+
+    useEffect(() => {
+        if (rawContent) {
+            const section = rawContent.find(s => s.sectionId === 'history');
+            if (section) {
+                const newContent: any = { ...content };
+                section.fields.forEach(field => {
+                    newContent[field.key] = field.value;
+                });
+                setContent(newContent);
+            }
+        }
+    }, [rawContent]);
+
+    const timeline = useMemo(() => {
+        try {
+            return JSON.parse(content.json_timeline);
+        } catch (e) {
+            return [];
+        }
+    }, [content.json_timeline]);
+
     return (
         <section id="history" className="py-24 bg-white relative">
             <div className="w-full max-w-7xl mx-auto px-4 md:px-6 text-center">
                 <div className="mb-12">
-                    <span className="text-secondary font-bold uppercase tracking-widest text-sm mb-2 block">Tradice</span>
-                    <h3 className="text-3xl md:text-4xl font-black text-secondary">
-                        HISTORIE <span className="text-primary">KEMPU</span>
+                    <span className="text-secondary font-bold uppercase tracking-widest text-sm mb-2 block">{content.section_title_small}</span>
+                    <h3 className="text-3xl md:text-4xl font-black text-secondary uppercase">
+                        {content.section_title_main}
                     </h3>
                 </div>
 
                 <div className="max-w-5xl mx-auto text-left">
                     {/* Mobile Timeline (Hidden on MD+) */}
                     <div className="md:hidden relative border-l-2 border-primary/20 ml-4 space-y-4 pl-6 py-2">
-                        {[
-                            { year: '2026', loc: 'Vaňov, Vaňov' },
-                            { year: '2025', loc: 'Přestanov, Vaňov' },
-                            { year: '2024', loc: 'Povrly' },
-                            { year: '2023', loc: 'Povrly' },
-                            { year: '2022', loc: 'Povrly' },
-                            { year: '2021', loc: 'Povrly' },
-                            { year: '2020', loc: 'Střekov' },
-                            { year: '2019', loc: 'Povrly' },
-                            { year: '2018', loc: 'Ústí nad Labem' },
-                            { year: '2017', loc: 'Svádov, Povrly' },
-                            { year: '2016', loc: 'Chlumec' },
-                            { year: '2015', loc: 'Povrly' },
-                            { year: '2014', loc: 'Chabařovice' },
-                            { year: '2013', loc: 'Ústí nad Labem' },
-                            { year: '2012', loc: 'Ústí nad Labem' },
-                        ].map((item, index) => (
+                        {timeline.map((item: any, index: number) => (
                             <motion.div
                                 key={index}
                                 initial={{ opacity: 0, x: -10 }}
@@ -52,23 +67,7 @@ export default function History() {
 
                     {/* Desktop Grid (Hidden on Mobile) */}
                     <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-4">
-                        {[
-                            { year: '2026', loc: 'Vaňov, Vaňov' },
-                            { year: '2025', loc: 'Přestanov, Vaňov' },
-                            { year: '2024', loc: 'Povrly' },
-                            { year: '2023', loc: 'Povrly' },
-                            { year: '2022', loc: 'Povrly' },
-                            { year: '2021', loc: 'Povrly' },
-                            { year: '2020', loc: 'Střekov' },
-                            { year: '2019', loc: 'Povrly' },
-                            { year: '2018', loc: 'Ústí nad Labem' },
-                            { year: '2017', loc: 'Svádov, Povrly' },
-                            { year: '2016', loc: 'Chlumec' },
-                            { year: '2015', loc: 'Povrly' },
-                            { year: '2014', loc: 'Chabařovice' },
-                            { year: '2013', loc: 'Ústí nad Labem' },
-                            { year: '2012', loc: 'Ústí nad Labem' },
-                        ].map((item, index) => (
+                        {timeline.map((item: any, index: number) => (
                             <motion.div
                                 key={index}
                                 initial={{ opacity: 0, y: 10 }}

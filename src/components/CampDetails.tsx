@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Calendar, MapPin, CheckCircle, ArrowRight } from 'lucide-react';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { useState, useEffect } from 'react';
 
 const defaultTermsTerms = [
     {
@@ -27,6 +28,26 @@ const defaultTermsTerms = [
 export default function CampDetails() {
     const convexCamps = useQuery(api.camps.getCamps);
     const terms = convexCamps || defaultTermsTerms;
+    
+    const rawContent = useQuery(api.content.getContent);
+    const [content, setContent] = useState({
+        section_title: 'Termíny',
+        section_year: '2026',
+        description: 'Vyberte si ten správný týden. Kapacita je omezená, tak neváhejte!',
+    });
+
+    useEffect(() => {
+        if (rawContent) {
+            const section = rawContent.find(s => s.sectionId === 'camps');
+            if (section) {
+                const newContent: any = { ...content };
+                section.fields.forEach(field => {
+                    newContent[field.key] = field.value;
+                });
+                setContent(newContent);
+            }
+        }
+    }, [rawContent]);
 
     // Camp details section
     return (
@@ -46,10 +67,10 @@ export default function CampDetails() {
                         transition={{ duration: 0.6 }}
                         className="text-4xl md:text-6xl font-black mb-6 uppercase tracking-tight"
                     >
-                        Termíny <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-500">2026</span>
+                        {content.section_title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-500">{content.section_year}</span>
                     </motion.h2>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
-                        Vyberte si ten správný týden. Kapacita je omezená, tak neváhejte!
+                        {content.description}
                     </p>
                 </div>
 

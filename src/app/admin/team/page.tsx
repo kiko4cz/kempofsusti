@@ -6,19 +6,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
 import { toast } from 'sonner';
-import { CldUploadWidget } from 'next-cloudinary';
 
 export default function AdminTeam() {
     const team = useQuery(api.team.getTeam);
-    const settings = useQuery(api.settings.getSettings);
     const addMember = useMutation(api.team.addMember);
     const updateMember = useMutation(api.team.updateMember);
     const deleteMember = useMutation(api.team.deleteMember);
+    const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+    const getUrlMutation = useMutation(api.files.getUrlMutation);
 
     const [isEditing, setIsEditing] = useState(false);
     const [currentCoach, setCurrentCoach] = useState<any>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
 
     const handleAddNew = () => {
         setCurrentCoach({
@@ -145,29 +146,45 @@ export default function AdminTeam() {
                                         </div>
                                         
                                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 rounded-[2rem]">
-                                            {settings?.cloudinaryUploadPreset ? (
-                                                <CldUploadWidget
-                                                    uploadPreset={settings.cloudinaryUploadPreset}
-                                                    onSuccess={(result: any) => {
-                                                        const info = result.info;
-                                                        setCurrentCoach({ ...currentCoach, img: info.secure_url });
-                                                        toast.success('Fotka nahrána!');
-                                                    }}
-                                                >
-                                                    {({ open }) => (
-                                                        <button 
-                                                            onClick={() => open()}
-                                                            className="px-6 py-3 bg-white text-slate-900 font-bold rounded-xl shadow-xl flex items-center gap-2 transform active:scale-95 transition-all text-xs uppercase tracking-widest"
-                                                        >
-                                                            <Camera size={16} /> Změnit fotku
-                                                        </button>
-                                                    )}
-                                                </CldUploadWidget>
-                                            ) : (
-                                                <div className="p-6 text-center text-white bg-red-500/80 rounded-[2rem] text-xs font-bold leading-relaxed px-4 mx-4">
-                                                    Nutno nastavit Cloudinary v Nastavení
-                                                </div>
-                                            )}
+                                            <input 
+                                                type="file" 
+                                                accept="image/*" 
+                                                className="hidden" 
+                                                id="team-upload" 
+                                                disabled={isUploading}
+                                                onChange={async (e) => {
+                                                    const file = e.target.files?.[0];
+                                                    if (!file) return;
+                                                    setIsUploading(true);
+                                                    try {
+                                                        const uploadUrl = await generateUploadUrl();
+                                                        const result = await fetch(uploadUrl, {
+                                                            method: "POST",
+                                                            headers: { "Content-Type": file.type },
+                                                            body: file,
+                                                        });
+                                                        if (!result.ok) throw new Error('Chyba při nahrávání');
+                                                        const { storageId } = await result.json();
+                                                        const url = await getUrlMutation({ storageId });
+                                                        if (url) {
+                                                            setCurrentCoach({ ...currentCoach, img: url });
+                                                            toast.success('Fotka nahrána!');
+                                                        }
+                                                    } catch (error) {
+                                                        toast.error('Chyba při nahrávání fotky');
+                                                    } finally {
+                                                        setIsUploading(false);
+                                                        if (e.target) e.target.value = '';
+                                                    }
+                                                }}
+                                            />
+                                            <label 
+                                                htmlFor="team-upload"
+                                                className={`px-6 py-3 bg-white text-slate-900 font-bold rounded-xl shadow-xl flex items-center gap-2 transform active:scale-95 transition-all text-xs uppercase tracking-widest cursor-pointer ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                            >
+                                                {isUploading ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} />} 
+                                                {isUploading ? 'Nahrávám...' : 'Změnit fotku'}
+                                            </label>
                                         </div>
                                     </div>
                                     <input

@@ -6,19 +6,12 @@ import Image from 'next/image';
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
-interface Sponsor {
-    id: number;
-    name: string;
-    logo: string;
-    level: 'main' | 'partner';
-}
-
-const defaultSponsors: Sponsor[] = [
-    { id: 1, name: 'Panini', logo: '/panini_sponzor.jpeg', level: 'main' },
-];
+// Static array removed in favor of dynamic fetch
 
 export default function Sponsors() {
     const rawContent = useQuery(api.content.getContent);
+    const sponsors = useQuery(api.sponsors.getSponsors);
+
     const [content, setContent] = useState({
         section_title: 'SPONZOŘI A PARTNEŘI',
         main_heading: 'PODPORUJÍ NÁS',
@@ -37,8 +30,8 @@ export default function Sponsors() {
         }
     }, [rawContent]);
 
-    const mainSponsors = defaultSponsors.filter(s => s.level === 'main');
-    const partners = defaultSponsors.filter(s => s.level === 'partner');
+    const mainSponsors = sponsors?.filter(s => s.level === 'main') || [];
+    const partners = sponsors?.filter(s => s.level === 'partner') || [];
 
     return (
         <section id="sponsors" className="py-24 bg-gray-50 relative overflow-hidden">
@@ -62,7 +55,7 @@ export default function Sponsors() {
                     <div className="flex flex-wrap justify-center gap-12 items-center">
                         {mainSponsors.map((sponsor, index) => (
                             <motion.div
-                                key={sponsor.id}
+                                key={sponsor._id}
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
@@ -91,7 +84,7 @@ export default function Sponsors() {
                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                     {partners.map((sponsor, index) => (
                         <motion.div
-                            key={sponsor.id}
+                            key={sponsor._id}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}

@@ -6,17 +6,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
 import { toast } from 'sonner';
-import { CldUploadWidget } from 'next-cloudinary';
 
 export default function AdminGallery() {
     const images = useQuery(api.gallery.getImages);
     const addImage = useMutation(api.gallery.addImage);
     const deleteImage = useMutation(api.gallery.deleteImage);
-    const settings = useQuery(api.settings.getSettings);
+    const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+    const getUrlMutation = useMutation(api.files.getUrlMutation);
 
     const [isAddingUrl, setIsAddingUrl] = useState(false);
     const [newImageUrl, setNewImageUrl] = useState('');
     const [isDeleting, setIsDeleting] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
 
     const handleAddImageUrl = async () => {
         if (!newImageUrl) return;
@@ -49,19 +50,45 @@ export default function AdminGallery() {
         }
     };
 
-    const onUploadSuccess = async (result: any) => {
-        const info = result.info;
-        if (info && info.secure_url) {
-            try {
+    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        setIsUploading(true);
+        try {
+            // 1. Získat upload URL z Convex
+            const uploadUrl = await generateUploadUrl();
+
+            // 2. Nahrát soubor
+            const result = await fetch(uploadUrl, {
+                method: "POST",
+                headers: { "Content-Type": file.type },
+                body: file,
+            });
+
+            if (!result.ok) throw new Error('Chyba při nahrávání souboru');
+
+            const { storageId } = await result.json();
+
+            // 3. Získat veřejné URL
+            const url = await getUrlMutation({ storageId });
+
+            if (url) {
+                // 4. Uložit do databáze
                 await addImage({
-                    url: info.secure_url,
-                    publicId: info.public_id,
-                    alt: info.original_filename || 'Nahraný obrázek'
+                    url: url,
+                    publicId: storageId,
+                    alt: file.name
                 });
-                toast.success('Fotka úspěšně nahrána d cloudu!');
-            } catch (error) {
-                toast.error('Chyba při ukládání fotky do databáze');
+                toast.success('Fotka úspěšně nahrána!');
             }
+        } catch (error) {
+            console.error(error);
+            toast.error('Chyba při nahrávání fotky');
+        } finally {
+            setIsUploading(false);
+            // Reset the input value so the same file can be uploaded again if needed
+            if (event.target) event.target.value = '';
         }
     };
 
@@ -78,49 +105,24 @@ export default function AdminGallery() {
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                    {settings?.cloudinaryCloudName && settings?.cloudinaryUploadPreset ? (
-                        <CldUploadWidget 
-                            uploadPreset={settings.cloudinaryUploadPreset}
-                            onSuccess={onUploadSuccess}
-                            options={{
-                                cloudName: settings.cloudinaryCloudName,
-                                sources: ['local', 'url', 'camera'],
-                                multiple: false,
-                                styles: {
-                                    palette: {
-                                        window: "#FFFFFF",
-                                        windowBorder: "#E2E8F0",
-                                        tabIcon: "#dc2626",
-                                        menuIcons: "#1E293B",
-                                        textDark: "#0F172A",
-                                        textLight: "#FFFFFF",
-                                        link: "#dc2626",
-                                        action: "#dc2626",
-                                        inactiveTabIcon: "#94A3B8",
-                                        error: "#EF4444",
-                                        inProgress: "#dc2626",
-                                        complete: "#22C55E",
-                                        sourceBg: "#F8FAFC"
-                                    }
-                                }
-                            }}
+                    <div>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            id="gallery-upload"
+                            onChange={handleFileUpload}
+                            disabled={isUploading}
+                        />
+                        <label
+                            htmlFor="gallery-upload"
+                            className={`bg-white hover:bg-slate-50 text-slate-700 font-black px-6 py-4 rounded-2xl border border-slate-200 cursor-pointer flex items-center gap-3 transition-all shadow-sm active:scale-95 uppercase tracking-widest text-xs ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                            {({ open }) => (
-                                <button
-                                    onClick={() => open()}
-                                    className="bg-white hover:bg-slate-50 text-slate-700 font-black px-6 py-4 rounded-2xl border border-slate-200 cursor-pointer flex items-center gap-3 transition-all shadow-sm active:scale-95 uppercase tracking-widest text-xs"
-                                >
-                                    <Upload size={18} className="text-primary" />
-                                    Nahrát fotku
-                                </button>
-                            )}
-                        </CldUploadWidget>
-                    ) : (
-                        <div className="bg-red-50 text-red-500 px-6 py-4 rounded-2xl border border-red-100 flex items-center gap-3 text-xs font-black uppercase tracking-widest animate-pulse">
-                            Cloudinary není nastaveno!
-                        </div>
-                    )}
-                    
+                            {isUploading ? <Loader2 size={18} className="animate-spin text-primary" /> : <Upload size={18} className="text-primary" />}
+                            {isUploading ? 'Nahrávám...' : 'Nahrát fotku'}
+                        </label>
+                    </div>
+
                     <button
                         onClick={() => setIsAddingUrl(!isAddingUrl)}
                         className="bg-primary hover:bg-orange-500 text-white font-black px-8 py-4 rounded-2xl flex items-center gap-3 transition-all shadow-2xl shadow-primary/30 transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest text-xs"
@@ -175,7 +177,7 @@ export default function AdminGallery() {
                         <ImageIcon size={40} />
                     </div>
                     <h3 className="text-2xl font-black text-slate-900 mb-2 tracking-tight">Galerie je prázdná</h3>
-                    <p className="text-slate-400 mb-8 font-medium">Nahrajte první fotky d cloudu.</p>
+                    <p className="text-slate-400 mb-8 font-medium">Nahrajte první fotky do databáze.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -211,7 +213,7 @@ export default function AdminGallery() {
                                         </button>
                                     </div>
                                 </div>
-                                <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-[2.5rem]"></div>
+                                <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-black/5 rounded-[2.5rem]"></div>
                             </motion.div>
                         ))}
                     </AnimatePresence>

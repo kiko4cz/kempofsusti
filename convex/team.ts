@@ -62,6 +62,20 @@ export const deleteMember = mutation({
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Unauthorized");
 
+    const member = await ctx.db.get(args.id);
+    if (!member) throw new Error("Member not found");
+
+    if (member.img && member.img.includes('.convex.cloud/api/storage/')) {
+        try {
+            const storageId = member.img.split('/api/storage/')[1];
+            if (storageId) {
+                await ctx.storage.delete(storageId as any);
+            }
+        } catch (e) {
+            console.error("Failed to delete from storage", e);
+        }
+    }
+
     await ctx.db.delete(args.id);
   },
 });

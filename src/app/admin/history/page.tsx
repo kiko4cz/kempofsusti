@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Save, History as HistoryIcon, Calendar, MapPin, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { toast } from 'sonner';
 
 interface HistoryItem {
     id: string;
@@ -29,23 +32,37 @@ const defaultHistory: HistoryItem[] = [
 ];
 
 export default function AdminHistory() {
+    const rawContent = useQuery(api.content.getContent);
+    const updateContent = useMutation(api.content.updateContent);
     const [history, setHistory] = useState<HistoryItem[]>([]);
+    const [originalFields, setOriginalFields] = useState<any[]>([]);
 
     useEffect(() => {
-        const savedHistory = localStorage.getItem('camp_history');
-        if (savedHistory) {
-            setHistory(JSON.parse(savedHistory));
-        } else {
-            setHistory(defaultHistory);
-            localStorage.setItem('camp_history', JSON.stringify(defaultHistory));
+        if (rawContent) {
+            const section = rawContent.find(s => s.sectionId === 'history');
+            if (section) {
+                setOriginalFields(section.fields);
+                const timelineField = section.fields.find(f => f.key === 'json_timeline');
+                if (timelineField && timelineField.value) {
+                    try {
+                        const parsed = JSON.parse(String(timelineField.value));
+                        // Map "loc" from JSON to "location" for UI
+                        setHistory(parsed.map((p: any, idx: number) => ({
+                            id: Date.now().toString() + idx,
+                            year: p.year,
+                            location: p.loc
+                        })));
+                    } catch (e) {
+                        setHistory(defaultHistory);
+                    }
+                } else {
+                    setHistory(defaultHistory);
+                }
+            } else {
+                setHistory(defaultHistory);
+            }
         }
-    }, []);
-
-    const saveHistory = (newHistory: HistoryItem[]) => {
-        setHistory(newHistory);
-        localStorage.setItem('camp_history', JSON.stringify(newHistory));
-        window.dispatchEvent(new Event('storage'));
-    };
+    }, [rawContent]);
 
     const handleAdd = () => {
         const newItem: HistoryItem = {
@@ -53,12 +70,12 @@ export default function AdminHistory() {
             year: (new Date().getFullYear()).toString(),
             location: 'Nová lokalita'
         };
-        saveHistory([newItem, ...history]);
+        setHistory([newItem, ...history]);
     };
 
     const handleDelete = (id: string) => {
         if (confirm('Opravdu smazat tento záznam?')) {
-            saveHistory(history.filter(h => h.id !== id));
+            setHistory(history.filter(h => h.id !== id));
         }
     };
 
@@ -69,10 +86,37 @@ export default function AdminHistory() {
         setHistory(newHistory);
     };
 
-    const handleSave = () => {
-        localStorage.setItem('camp_history', JSON.stringify(history));
-        window.dispatchEvent(new Event('storage'));
-        alert('Historie uložena!');
+    const handleSave = async () => {
+        // Build JSON timeline with "loc" to match History.tsx
+        const jsonTimeline = JSON.stringify(history.map(h => ({
+            year: h.year,
+            loc: h.location
+        })));
+
+        // Update fields array while keeping title etc
+        let newFields = [...originalFields];
+        const timelineIndex = newFields.findIndex(f => f.key === 'json_timeline');
+        
+        if (timelineIndex >= 0) {
+            newFields[timelineIndex].value = jsonTimeline;
+        } else {
+            newFields.push({
+                key: 'json_timeline',
+                label: 'Časová osa (JSON formát)',
+                type: 'textarea',
+                value: jsonTimeline
+            });
+        }
+
+        try {
+            await updateContent({
+                sectionId: 'history',
+                fields: newFields
+            });
+            toast.success('Historie uložena!');
+        } catch (error) {
+            toast.error('Chyba při ukládání');
+        }
     };
 
     return (

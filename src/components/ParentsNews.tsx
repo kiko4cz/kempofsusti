@@ -5,12 +5,33 @@ import { Calendar, Megaphone, Info, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { useState, useEffect } from 'react';
 
 export default function ParentsNews() {
     const convexNews = useQuery(api.news.getNews);
     const news = convexNews?.filter((n: any) => n.active) || [];
 
     const hasNews = news.length > 0;
+    
+    const rawContent = useQuery(api.content.getContent);
+    const [content, setContent] = useState({
+        section_title_small: 'Aktuality',
+        section_title_main: 'PRO RODIČE',
+        description: 'Sledujte nejnovější informace, změny v harmonogramu a důležitá oznámení.',
+    });
+
+    useEffect(() => {
+        if (rawContent) {
+            const section = rawContent.find(s => s.sectionId === 'news');
+            if (section) {
+                const newContent: any = { ...content };
+                section.fields.forEach(field => {
+                    newContent[field.key] = field.value;
+                });
+                setContent(newContent);
+            }
+        }
+    }, [rawContent]);
 
     return (
         <section id="parents-news" className="py-24 bg-white relative overflow-hidden">
@@ -19,17 +40,17 @@ export default function ParentsNews() {
 
             <div className="container mx-auto px-4 relative z-10">
                 <div className="text-center mb-16">
-                    <span className="text-primary font-bold uppercase tracking-widest text-sm mb-2 block">Informace</span>
+                    <span className="text-primary font-bold uppercase tracking-widest text-sm mb-2 block">{content.section_title_small}</span>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="text-4xl md:text-5xl font-black text-secondary mb-6 uppercase tracking-tight"
                     >
-                        Aktuality <span className="text-primary">pro rodiče</span>
+                        {content.section_title_main}
                     </motion.h2>
                     <p className="text-gray-500 text-lg max-w-2xl mx-auto font-light">
-                        Sledujte nejnovější informace, změny v harmonogramu a důležitá oznámení.
+                        {content.description}
                     </p>
                 </div>
 

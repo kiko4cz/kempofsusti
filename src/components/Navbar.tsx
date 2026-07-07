@@ -6,7 +6,8 @@ import Image from 'next/image';
 import { Menu, X, Calendar, Info, Image as ImageIcon, Phone, Home, Megaphone, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
-
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 const navItems = [
     { name: 'Domů', href: '/', icon: Home },
     { name: 'Kempy 2026', href: '#camps', icon: Calendar },
@@ -20,6 +21,19 @@ const navItems = [
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    
+    const rawContent = useQuery(api.content.getContent);
+    const [logoText, setLogoText] = useState('KEMP OFSUSTI');
+    
+    useEffect(() => {
+        if (rawContent) {
+            const navbarSec = rawContent.find(s => s.sectionId === 'navbar');
+            if (navbarSec) {
+                const logoField = navbarSec.fields.find(f => f.key === 'logo_text');
+                if (logoField) setLogoText(String(logoField.value));
+            }
+        }
+    }, [rawContent]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -67,12 +81,12 @@ export default function Navbar() {
                             "font-heading font-extrabold text-xl md:text-2xl tracking-tighter transition-colors uppercase",
                             scrolled ? "text-secondary" : "text-white drop-shadow-md"
                         )}>
-                            KEMP<span className="text-primary">OFS</span>USTI
+                            {logoText}
                         </span>
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-1 bg-white/10 backdrop-blur-sm p-1 rounded-full border border-white/10">
+                    <div className="hidden xl:flex items-center gap-1 bg-white/10 backdrop-blur-sm p-1 rounded-full border border-white/10">
                         {navItems.map((item) => (
                             <Link
                                 key={item.name}
@@ -92,7 +106,7 @@ export default function Navbar() {
                     {/* Mobile Menu Button */}
                     <button
                         className={clsx(
-                            "md:hidden p-2 rounded-full transition-colors",
+                            "xl:hidden p-2 rounded-full transition-colors",
                             scrolled ? "text-secondary bg-gray-100" : "text-white bg-white/20 backdrop-blur-md"
                         )}
                         onClick={() => setIsOpen(!isOpen)}
@@ -110,7 +124,7 @@ export default function Navbar() {
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
-                        className="fixed inset-x-4 top-24 z-40 md:hidden bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-100 overflow-hidden"
+                        className="fixed inset-x-4 top-24 z-40 xl:hidden bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-100 overflow-hidden"
                     >
                         <div className="flex flex-col p-4 gap-2">
                             {navItems.map((item) => (

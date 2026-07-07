@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus, Clock, Utensils, Shirt, ChevronDown } from 'lucide-react';
 import clsx from 'clsx';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
+import { useEffect } from 'react';
 
 const schedule = [
     { time: '07:30 - 08:30', activity: 'Příchod dětí' },
@@ -43,6 +46,26 @@ const faqs = [
 
 export default function ParentsInfo() {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
+    
+    const rawContent = useQuery(api.content.getContent);
+    const [content, setContent] = useState({
+        section_title: 'Důležité informace',
+        main_heading: 'VŠECHNO CO POTŘEBUJETE VĚDĚT',
+        description: 'Pro bezproblémový průběh kempu prosíme o pečlivé prostudování a vyplnění následujících dokumentů.',
+    });
+
+    useEffect(() => {
+        if (rawContent) {
+            const section = rawContent.find(s => s.sectionId === 'parents_info');
+            if (section) {
+                const newContent: any = { ...content };
+                section.fields.forEach(field => {
+                    newContent[field.key] = field.value;
+                });
+                setContent(newContent);
+            }
+        }
+    }, [rawContent]);
 
     return (
         <section id="parents" className="py-24 bg-white relative">
@@ -51,10 +74,10 @@ export default function ParentsInfo() {
             <div className="w-full max-w-7xl mx-auto px-4 md:px-6 relative z-10">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl md:text-5xl font-black mb-6 text-secondary uppercase tracking-tight">
-                        Informace <span className="text-primary">ke kempu</span>
+                        {content.main_heading}
                     </h2>
                     <p className="text-gray-500 text-lg max-w-2xl mx-auto font-light">
-                        Vše důležité na jednom místě. Odpovědi na nejčastější otázky a harmonogram dne.
+                        {content.description}
                     </p>
                 </div>
 

@@ -4,35 +4,43 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Image as ImageIcon, ArrowUpRight, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-
-// Local images from public/galerie
-const images = [
-    { src: '/galerie/IMG_0415.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/IMG_0426.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/IMG_0436.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/IMG_0438.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/IMG_5612.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/f0928466-ca1b-4100-8310-93c50c93b1de.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/771f082a-d782-47f9-8fdf-bef6287be644.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/IMG_0046.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/IMG_0057.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/IMG_0252.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/IMG_0279.jpg', alt: 'Momentka z kempu' },
-    { src: '/galerie/IMG_0297.jpg', alt: 'Momentka z kempu' },
-];
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
 export default function Gallery() {
+    const convexImages = useQuery(api.gallery.getImages);
+    const galleryImages = convexImages ? convexImages.map(img => ({ src: img.url, alt: img.alt || 'Momentka z kempu' })) : [];
+    
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+    const rawContent = useQuery(api.content.getContent);
+    const [content, setContent] = useState({
+        section_title_small: 'Zážitky',
+        section_title_main: 'FOTOGALERIE',
+    });
+
+    useEffect(() => {
+        if (rawContent) {
+            const section = rawContent.find(s => s.sectionId === 'gallery');
+            if (section) {
+                const newContent: any = { ...content };
+                section.fields.forEach(field => {
+                    newContent[field.key] = field.value;
+                });
+                setContent(newContent);
+            }
+        }
+    }, [rawContent]);
 
     const handleNext = useCallback((e?: React.MouseEvent) => {
         e?.stopPropagation();
-        setSelectedIndex((prev) => (prev === null ? null : (prev + 1) % images.length));
-    }, []);
+        setSelectedIndex((prev) => (prev === null ? null : (prev + 1) % galleryImages.length));
+    }, [galleryImages.length]);
 
     const handlePrev = useCallback((e?: React.MouseEvent) => {
         e?.stopPropagation();
-        setSelectedIndex((prev) => (prev === null ? null : (prev - 1 + images.length) % images.length));
-    }, []);
+        setSelectedIndex((prev) => (prev === null ? null : (prev - 1 + galleryImages.length) % galleryImages.length));
+    }, [galleryImages.length]);
 
     const handleKeyDown = useCallback((e: KeyboardEvent) => {
         if (selectedIndex === null) return;
@@ -60,9 +68,9 @@ export default function Gallery() {
             <div className="w-full max-w-7xl mx-auto px-4 md:px-6">
                 <div className="flex flex-col md:flex-row items-end justify-between mb-16 gap-8">
                     <div className="max-w-xl">
-                        <span className="text-secondary font-bold uppercase tracking-widest text-sm mb-2 block">Vzpomínky</span>
+                        <span className="text-secondary font-bold uppercase tracking-widest text-sm mb-2 block">{content.section_title_small}</span>
                         <h2 className="text-4xl md:text-5xl font-black text-secondary leading-none">
-                            GALERIE <span className="text-primary italic">ZÁŽITKŮ</span>
+                            {content.section_title_main}
                         </h2>
                         <p className="text-gray-500 mt-4 text-lg font-light">
                             Fotbal nejsou jen góly, ale především emoce. Podívejte se na momentky z minulých ročníků.
@@ -81,7 +89,7 @@ export default function Gallery() {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-[250px]">
-                    {images.map((img, index) => (
+                    {galleryImages.slice(0, 12).map((img, index) => (
                         <motion.div
                             key={index}
                             layoutId={`image-${index}`}
@@ -150,8 +158,8 @@ export default function Gallery() {
                             onClick={(e) => e.stopPropagation()}
                         >
                             <Image
-                                src={images[selectedIndex].src}
-                                alt={images[selectedIndex].alt}
+                                src={galleryImages[selectedIndex].src}
+                                alt={galleryImages[selectedIndex].alt}
                                 fill
                                 className="object-contain"
                                 priority

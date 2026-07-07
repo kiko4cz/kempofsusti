@@ -64,4 +64,11 @@ export default defineSchema({
     })),
     createdAt: v.number(),
   }),
+  sponsors: defineTable({
+    name: v.string(),
+    logo: v.string(), // URL to the image
+    level: v.string(), // 'main' | 'partner'
+    order: v.optional(v.number()),
+    createdAt: v.number(),
+  }),
 });

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { User, UserRound } from 'lucide-react';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { useState, useEffect } from 'react';
 
 const defaultCoaches = [
     {
@@ -105,15 +106,36 @@ export default function Team() {
         return aVal - bVal;
     });
 
+    const rawContent = useQuery(api.content.getContent);
+    const [content, setContent] = useState({
+        section_title_small: 'Naši trenéři',
+        section_title_main: 'KDO SE O DĚTI STARÁ',
+        description: 'Náš tým se skládá ze zkušených trenérů, pedagogů a nadšenců, kteří dělají vše pro to, aby si děti kemp maximálně užily.',
+    });
+
+    useEffect(() => {
+        if (rawContent) {
+            const section = rawContent.find(s => s.sectionId === 'team');
+            if (section) {
+                const newContent: any = { ...content };
+                section.fields.forEach(field => {
+                    newContent[field.key] = field.value;
+                });
+                setContent(newContent);
+            }
+        }
+    }, [rawContent]);
+
     return (
         <section id="team" className="py-24 bg-gray-50">
             <div className="w-full max-w-7xl mx-auto px-4 md:px-6">
                 <div className="text-center mb-16">
+                    <span className="text-primary font-bold uppercase tracking-widest text-sm mb-2 block">{content.section_title_small}</span>
                     <h2 className="text-4xl md:text-5xl font-black mb-4 text-secondary uppercase tracking-tight">
-                        Náš <span className="text-primary">Tým</span>
+                        {content.section_title_main}
                     </h2>
                     <p className="text-gray-600 text-lg max-w-2xl mx-auto font-light">
-                        Zkušení trenéři, kteří se postarají o bezpečnost, rozvoj a především zábavu vašich dětí.
+                        {content.description}
                     </p>
                 </div>
 
