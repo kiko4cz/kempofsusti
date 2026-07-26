@@ -58,3 +58,19 @@ async function updateInternal(ctx: any, args: any) {
     });
   }
 }
+
+export const fixHeroBg = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const existing = await ctx.db
+      .query("content")
+      .withIndex("by_section", (q: any) => q.eq("sectionId", "hero"))
+      .unique();
+    if (existing) {
+      const newFields = existing.fields.map((f: any) => 
+        f.key === "bg_image" ? { ...f, value: "/photo_2026.jpg" } : f
+      );
+      await ctx.db.patch(existing._id, { fields: newFields });
+    }
+  }
+});

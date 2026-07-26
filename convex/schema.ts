@@ -71,4 +71,20 @@ export default defineSchema({
     order: v.optional(v.number()),
     createdAt: v.number(),
   }),
+  registrations: defineTable({
+    campId: v.string(), // The ID of the term
+    campName: v.string(),
+    campDates: v.string(),
+    parentName: v.string(),
+    parentEmail: v.string(),
+    parentPhone: v.string(),
+    childName: v.string(),
+    childBirthDate: v.string(),
+    childClub: v.optional(v.string()),
+    tshirtSize: v.optional(v.string()),
+    healthInfo: v.optional(v.string()),
+    notes: v.optional(v.string()),
+    status: v.string(), // e.g. 'Nová', 'Schválená', 'Zamítnutá'
+    createdAt: v.number(),
+  }),
 });

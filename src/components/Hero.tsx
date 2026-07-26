@@ -20,7 +20,7 @@ import { api } from "../../convex/_generated/api";
 export default function Hero() {
     const rawContent = useQuery(api.content.getContent);
     const [content, setContent] = useState({
-        bg_image: '/main-bg.jpg',
+        bg_image: '/photo_2026.jpg',
         title_line1: 'FOTBALEM',
         title_line2: 'ZÁBAVA',
         title_line3: 'JEN ZAČÍNÁ',

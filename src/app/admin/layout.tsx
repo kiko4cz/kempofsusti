@@ -56,14 +56,14 @@ export default function AdminLayout({
 
     const menuItems = [
         { name: 'Přehled', href: '/admin/dashboard', icon: LayoutDashboard },
+        { name: 'Přihlášky', href: '/admin/registrations', icon: Calendar },
         { name: 'Tým', href: '/admin/team', icon: Users },
         { name: 'Obsah webu', href: '/admin/content', icon: FileText },
-        { name: 'Turnusy', href: '/admin/camps', icon: Calendar },
         { name: 'Sponzoři', href: '/admin/sponsors', icon: Heart },
         { name: 'Statistiky', href: '/admin/stats', icon: BarChart },
         { name: 'Pro rodiče', href: '/admin/news', icon: Newspaper },
         { name: 'Galerie', href: '/admin/gallery', icon: ImageIcon },
-        { name: 'Historie', href: '/admin/history', icon: History },
+        { name: 'Turnusy', href: '/admin/history', icon: History },
         { name: 'Nastavení', href: '/admin/settings', icon: Settings },
     ];
 

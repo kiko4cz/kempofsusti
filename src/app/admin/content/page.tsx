@@ -36,7 +36,7 @@ const defaultContent: ContentSection[] = [
         id: 'hero',
         label: 'Úvodní sekce (Hero)',
         fields: [
-            { key: 'bg_image', label: 'Obrázek na pozadí', type: 'image', value: '/main-bg.jpg' },
+            { key: 'bg_image', label: 'Obrázek na pozadí', type: 'image', value: '/photo_2026.jpg' },
             { key: 'title_line1', label: 'Nadpis - Řádek 1', type: 'text', value: 'FOTBALEM' },
             { key: 'title_line2', label: 'Nadpis - Zvýrazněné', type: 'text', value: 'ZÁBAVA' },
             { key: 'title_line3', label: 'Nadpis - Řádek 3', type: 'text', value: 'JEN ZAČÍNÁ' },

@@ -27,7 +27,7 @@ const faqs = [
         question: 'Co s sebou?',
         answer: [
             { time: 'Při příchodu', activity: 'Formulář bezinfekčnosti, ofocenou kartičku pojištěnce' },
-            { time: 'Tréninkový proces', activity: 'Sportovní oblečení (šusťáková bunda pro případ deště), kopačky (sálovky pro případ špatného počasí a přesunu do tělocvičny), ručník, pantofle, láhev na pití, vlastní míč' },
+            { time: 'Oblečení a vybavení', activity: 'Sportovní oblečení (šusťáková bunda pro případ deště), kopačky (sálovky pro případ špatného počasí a přesunu do tělocvičny), ručník, pantofle, láhev na pití, vlastní míč, plavky, pevná obuv na vycházky' },
             { time: 'Na výlet', activity: 'Na sebe kempový set, dobrovolné kapesné na případné nákupy ve fanshopu (dle programu)' }
         ],
         icon: Shirt

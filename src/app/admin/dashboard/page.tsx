@@ -30,7 +30,7 @@ interface CampTerm {
 
 export default function AdminDashboard() {
     const statsData = useQuery(api.stats.getStats);
-    const campsData = useQuery(api.camps.getCamps);
+    const rawContent = useQuery(api.content.getContent);
     const backfill = useMutation(api.migrate.backfill);
     const [isBackfilling, setIsBackfilling] = useState(false);
 
@@ -46,7 +46,7 @@ export default function AdminDashboard() {
         }
     };
 
-    if (statsData === undefined || campsData === undefined) {
+    if (statsData === undefined || rawContent === undefined) {
         return (
             <div className="flex flex-col items-center justify-center py-40 space-y-4">
                 <Loader2 size={48} className="text-primary animate-spin" />
@@ -74,7 +74,37 @@ export default function AdminDashboard() {
         });
     }
 
-    const alerts = campsData
+    let activeTerms: any[] = [];
+    if (rawContent) {
+        const historySection = rawContent.find((s: any) => s.sectionId === 'history');
+        if (historySection) {
+            const timelineField = historySection.fields.find((f: any) => f.key === 'json_timeline');
+            if (timelineField && timelineField.value) {
+                try {
+                    const timeline = JSON.parse(String(timelineField.value));
+                    for (const yearItem of timeline) {
+                        if (yearItem.terms && Array.isArray(yearItem.terms)) {
+                            for (const term of yearItem.terms) {
+                                if (term.isActive) {
+                                    activeTerms.push({
+                                        _id: term.id,
+                                        year: yearItem.year,
+                                        dates: term.dates || '',
+                                        location: term.locationName || '',
+                                        price: term.price || '',
+                                        features: term.features ? term.features.split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+                                        status: term.status || 'Ještě otevřeno',
+                                    });
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {}
+            }
+        }
+    }
+
+    const alerts = activeTerms
         .filter((camp: any) => camp.status === 'Poslední místa' || camp.status === 'Obsazeno')
         .map((camp: any) => ({
             id: camp._id,
@@ -88,7 +118,7 @@ export default function AdminDashboard() {
         { name: 'Přihlášených dětí', value: totalKids.toString(), change: 'Celkem', icon: Users, color: 'text-blue-500', bg: 'bg-blue-500/10' },
         { name: 'Celkový zisk', value: `${totalProfit.toLocaleString()} Kč`, change: 'Tento rok', icon: TrendingUp, color: 'text-green-500', bg: 'bg-green-500/10' },
         { name: 'Celkové příjmy', value: `${totalRevenue.toLocaleString()} Kč`, change: 'Tento rok', icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10' },
-        { name: 'Počet turnusů', value: campsData.length.toString(), change: 'Aktivní', icon: Calendar, color: 'text-orange-500', bg: 'bg-orange-500/10' },
+        { name: 'Počet turnusů', value: activeTerms.length.toString(), change: 'Aktivní', icon: Calendar, color: 'text-orange-500', bg: 'bg-orange-500/10' },
     ];
 
     return (
@@ -113,7 +143,7 @@ export default function AdminDashboard() {
             </motion.div>
 
             {/* Backfill Banner - visible if no camps or stats */}
-            {(campsData?.length === 0 || statsData?.length === 0) && (
+            {(statsData?.length === 0) && (
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -199,7 +229,7 @@ export default function AdminDashboard() {
                                         <div className={`w-3 h-3 rounded-full shadow-[0_0_15px_rgba(0,0,0,0.1)] ${alert.type === 'warning' ? 'bg-orange-500 shadow-orange-500/50' : 'bg-blue-500 shadow-blue-500/50'} animate-pulse`} />
                                         <span className="font-semibold text-slate-800">{alert.message}</span>
                                     </div>
-                                    <Link href="/admin/camps" className="px-6 py-2.5 bg-white/50 hover:bg-white rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900">
+                                    <Link href="/admin/history" className="px-6 py-2.5 bg-white/50 hover:bg-white rounded-xl text-xs font-black uppercase tracking-widest transition-all border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900">
                                         Spravovat
                                     </Link>
                                 </motion.div>
@@ -217,11 +247,11 @@ export default function AdminDashboard() {
                             Rychlé ovládací centrum
                         </h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative z-10">
-                            <Link href="/admin/camps" className="p-6 bg-white/50 hover:bg-primary/5 border border-slate-200 hover:border-primary/30 rounded-[2rem] text-center transition-all duration-500 group">
-                                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
-                                    <Calendar className="text-primary" size={28} />
+                            <Link href="/admin/history" className="p-6 bg-white/50 hover:bg-primary/5 border border-slate-200 hover:border-primary/30 rounded-[2rem] text-center transition-all duration-500 group">
+                                <div className="w-16 h-16 mx-auto bg-primary/5 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500 group-hover:bg-primary/10 group-hover:text-primary">
+                                    <Calendar className="text-slate-400 group-hover:text-primary transition-colors" size={28} />
                                 </div>
-                                <span className="text-sm font-bold text-slate-500 group-hover:text-primary transition-colors">Turnusy</span>
+                                <span className="font-bold text-slate-700 uppercase tracking-widest text-xs group-hover:text-primary transition-colors">Turnusy a Historie</span>
                             </Link>
                             <Link href="/admin/news" className="p-6 bg-white/50 hover:bg-blue-500/5 border border-slate-200 hover:border-blue-500/30 rounded-[2rem] text-center transition-all duration-500 group">
                                 <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500">
