@@ -68,7 +68,7 @@ export const fixHeroBg = internalMutation({
       .unique();
     if (existing) {
       const newFields = existing.fields.map((f: any) => 
-        f.key === "bg_image" ? { ...f, value: "/photo_2026.jpg" } : f
+        f.key === "bg_image" ? { ...f, value: "/photo_2027.jpg" } : f
       );
       await ctx.db.patch(existing._id, { fields: newFields });
     }

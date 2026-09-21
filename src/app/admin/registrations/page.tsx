@@ -7,12 +7,14 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { toast } from "sonner";
 import { Id } from "../../../../convex/_generated/dataModel";
-
+import { User } from 'lucide-react';
 export default function RegistrationsPage() {
     const registrations = useQuery(api.registrations.getRegistrations);
+    const coaches = useQuery(api.user.getCoaches);
     const updateStatus = useMutation(api.registrations.updateStatus);
     const deleteRegistration = useMutation(api.registrations.deleteRegistration);
     const triggerEmail = useMutation(api.registrations.triggerEmail);
+    const assignCoach = useMutation(api.registrations.assignCoach);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -23,6 +25,18 @@ export default function RegistrationsPage() {
             toast.success(`Stav změněn na: ${newStatus}`);
         } catch (error) {
             toast.error('Chyba při změně stavu');
+        }
+    };
+
+    const handleAssignCoach = async (registrationId: Id<"registrations">, coachId: string) => {
+        try {
+            await assignCoach({ 
+                registrationId, 
+                coachId: coachId ? (coachId as Id<"users">) : undefined 
+            });
+            toast.success('Trenér byl úspěšně přiřazen');
+        } catch (error) {
+            toast.error('Chyba při přiřazování trenéra');
         }
     };
 
@@ -208,6 +222,26 @@ export default function RegistrationsPage() {
                                 <div className="text-xs text-slate-400 font-medium mt-2">
                                     Přijato: {new Date(reg.createdAt).toLocaleString('cs-CZ')}
                                 </div>
+                                
+                                {/* PŘIŘAZENÍ TRENÉRA - Zobrazí se jen pokud je přihláška schválená */}
+                                {reg.status === 'Schválená' && (
+                                    <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-3">
+                                        <User size={16} className="text-slate-400" />
+                                        <span className="text-sm font-bold text-slate-600">Přiřazený trenér:</span>
+                                        <select 
+                                            value={reg.assignedCoachId || ""}
+                                            onChange={(e) => handleAssignCoach(reg._id, e.target.value)}
+                                            className="bg-slate-50 border border-slate-200 text-sm rounded-lg px-3 py-1.5 font-medium text-slate-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all cursor-pointer"
+                                        >
+                                            <option value="">Nepřiřazen</option>
+                                            {coaches?.map(coach => (
+                                                <option key={coach._id} value={coach._id}>
+                                                    {coach.name || coach.email || 'Neznámý trenér'}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex flex-row lg:flex-col gap-3 w-full lg:w-48 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100 pt-6 lg:pt-0 lg:pl-6">

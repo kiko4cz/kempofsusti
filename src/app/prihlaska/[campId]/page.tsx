@@ -1,21 +1,32 @@
 'use client';
 
-import { useState, useMemo, use } from 'react';
+import { useState, useMemo, useEffect, use } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
-import { Calendar, CheckCircle2, Loader2, Send, ChevronLeft, MapPin, CheckCircle, Info } from 'lucide-react';
+import { Calendar, CheckCircle2, Loader2, Send, ChevronLeft, MapPin, CheckCircle, Info, Lock } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useConvexAuth } from "convex/react";
+import { Id } from '../../../../convex/_generated/dataModel';
 
 export default function RegistrationPage({ params }: { params: Promise<{ campId: string }> }) {
+    const router = useRouter();
     const resolvedParams = use(params);
     const rawContent = useQuery(api.content.getContent);
     const submitRegistration = useMutation(api.registrations.submitRegistration);
+    const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
+    
+    // Získání dětí pro přihlášeného rodiče
+    const myChildren = useQuery(api.children.getMyChildren, isAuthenticated ? undefined : "skip");
+    const me = useQuery(api.user.getMe, isAuthenticated ? undefined : "skip");
     
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     
+    const [selectedChildId, setSelectedChildId] = useState<string>("new");
+
     const [formData, setFormData] = useState({
         parentName: '',
         parentEmail: '',
@@ -25,8 +36,21 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
         childClub: '',
         tshirtSize: '',
         healthInfo: '',
-        notes: ''
+        notes: '',
+        gdprConsent: false,
     });
+
+    // Předvyplnění údajů rodiče, pokud je přihlášen
+    useEffect(() => {
+        if (me) {
+            setFormData(prev => ({
+                ...prev,
+                parentName: prev.parentName || me.name || '',
+                parentEmail: prev.parentEmail || me.email || '',
+                parentPhone: prev.parentPhone || me.phone || '',
+            }));
+        }
+    }, [me]);
 
     // Find the camp details based on campId
     const camp = useMemo(() => {
@@ -68,17 +92,50 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
         return null;
     }, [rawContent, resolvedParams.campId]);
 
+    // Pokud uživatel vybere existující dítě, předvyplníme formulář
+    useEffect(() => {
+        if (selectedChildId && selectedChildId !== "new" && myChildren) {
+            const child = myChildren.find(c => c._id === selectedChildId);
+            if (child) {
+                setFormData(prev => ({
+                    ...prev,
+                    childName: child.name,
+                    childBirthDate: child.birthDate,
+                    childClub: child.club || '',
+                    tshirtSize: child.tshirtSize || '',
+                    healthInfo: child.healthInfo || '',
+                }));
+            }
+        } else if (selectedChildId === "new") {
+            setFormData(prev => ({
+                ...prev,
+                childName: '',
+                childBirthDate: '',
+                childClub: '',
+                tshirtSize: '',
+                healthInfo: '',
+            }));
+        }
+    }, [selectedChildId, myChildren]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!camp) return;
 
         setIsSubmitting(true);
         try {
+            // Použijeme hook, abychom poslali ID dítěte a ID usera. Convex mutation se postará o zbytek.
+            const userIdString = localStorage.getItem("convex-auth-token"); // nebo jiný způsob, jak získat id (řeší convex)
+            
+            const { gdprConsent, ...restFormData } = formData;
+            
             await submitRegistration({
                 campId: camp.id,
                 campName: camp.name || 'Turnus',
                 campDates: camp.dates || '',
-                ...formData
+                childId: selectedChildId !== "new" ? selectedChildId as Id<"children"> : undefined,
+                // userId is handled by getAuthUserId on the server
+                ...restFormData
             });
             setIsSuccess(true);
         } catch (error) {
@@ -90,10 +147,11 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+        setFormData({ ...formData, [e.target.name]: value });
     };
 
-    if (rawContent === undefined) {
+    if (rawContent === undefined || authLoading) {
         return (
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
                 <Loader2 className="w-12 h-12 text-primary animate-spin" />
@@ -106,7 +164,58 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
             <div className="min-h-screen bg-[#0a0f1c] flex flex-col items-center justify-center p-4 text-center">
                 <h1 className="text-3xl font-black text-white mb-4">Kemp nebyl nalezen</h1>
                 <p className="text-slate-400 mb-8">Omlouváme se, ale tento kemp se nepodařilo načíst. Možná již neexistuje.</p>
-                <Link href="/" className="px-6 py-3 bg-primary text-white font-bold rounded-xl">Zpět na úvod</Link>
+                <button onClick={() => router.back()} className="px-6 py-3 bg-primary text-white font-bold rounded-xl">Zpět na předchozí stranu</button>
+            </div>
+        );
+    }
+
+    if (!isAuthenticated) {
+        return (
+            <div className="min-h-screen bg-[#0a0f1c] flex flex-col items-center justify-center p-4 text-center relative overflow-hidden font-sans">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-orange-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+                
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{ type: "spring", bounce: 0.4 }}
+                    className="bg-[#111827]/80 backdrop-blur-2xl border border-white/10 p-10 md:p-12 rounded-[2.5rem] max-w-lg w-full relative z-10 shadow-2xl overflow-hidden"
+                >
+                    <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary via-orange-500 to-red-600"></div>
+                    
+                    <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-red-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner shadow-white/5 border border-white/5 transform -rotate-3">
+                        <Lock size={40} className="text-primary drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" />
+                    </div>
+                    
+                    <h1 className="text-3xl font-black text-white mb-4 tracking-tight">Přihlášení nutné</h1>
+                    
+                    <div className="bg-white/5 border border-white/5 rounded-2xl p-6 mb-8">
+                        <p className="text-slate-300 text-sm leading-relaxed font-medium">
+                            Pro odeslání přihlášky na kemp je nutné si vytvořit 
+                            <strong className="text-white"> účet rodiče</strong>. 
+                        </p>
+                        <p className="text-slate-400 text-xs mt-3">
+                            Díky tomu budete mít na jednom místě dokonalý přehled o stavu všech přihlášek a hodnocení od trenérů po skončení kempu.
+                        </p>
+                    </div>
+
+                    <Link 
+                        href={`/portal/login?redirect=/prihlaska/${resolvedParams.campId}`}
+                        className="group relative flex items-center justify-center w-full py-5 bg-primary text-white font-black text-lg rounded-2xl transition-all shadow-[0_0_30px_rgba(239,68,68,0.3)] hover:shadow-[0_0_50px_rgba(239,68,68,0.5)] hover:-translate-y-1 overflow-hidden"
+                    >
+                        <span className="relative z-10 flex items-center gap-2">
+                            Přihlásit se / Zaregistrovat
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </Link>
+                    
+                    <div className="mt-6 pt-6 border-t border-white/10">
+                        <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-slate-500 hover:text-white text-sm font-bold uppercase tracking-wider transition-colors group">
+                            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                            Zpět na předchozí stranu
+                        </button>
+                    </div>
+                </motion.div>
             </div>
         );
     }
@@ -121,7 +230,6 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
                         animate={{ opacity: 1 }}
                         className="min-h-screen flex flex-col items-center justify-center p-4 text-center bg-[#0a0f1c] relative overflow-hidden"
                     >
-                        {/* Background glowing orbs */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
                         <motion.div
@@ -146,16 +254,16 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
                             transition={{ delay: 0.5 }}
                             className="text-slate-400 text-lg md:text-xl max-w-lg mb-12 relative z-10"
                         >
-                            Vaše přihláška na kemp <strong className="text-white">{camp.name}</strong> ({camp.dates}) byla úspěšně odeslána. Brzy se vám ozveme na uvedený e-mail.
+                            Vaše přihláška na kemp <strong className="text-white">{camp.name}</strong> ({camp.dates}) byla úspěšně odeslána. Můžete ji sledovat ve svém klientském portálu.
                         </motion.p>
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6 }}
-                            className="relative z-10"
+                            className="relative z-10 flex gap-4"
                         >
-                            <Link href="/" className="px-8 py-4 bg-primary text-white hover:bg-orange-500 font-black rounded-xl transition-all shadow-lg shadow-primary/30 transform hover:-translate-y-1 inline-block">
-                                Zpět na úvodní stránku
+                            <Link href="/portal" className="px-8 py-4 bg-primary text-white hover:bg-orange-500 font-black rounded-xl transition-all shadow-lg shadow-primary/30 transform hover:-translate-y-1 inline-block">
+                                Přejít do portálu
                             </Link>
                         </motion.div>
                     </motion.div>
@@ -167,30 +275,22 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
                         exit={{ opacity: 0 }}
                         className="w-full flex flex-col lg:flex-row min-h-screen relative"
                     >
-                        {/* Left Column: Premium Dark Red Gradient with Logo */}
+                        {/* Left Column */}
                         <div className="w-full lg:w-5/12 bg-gradient-to-br from-red-950 via-[#0a0f1c] to-[#050810] text-white p-8 md:p-12 lg:p-16 relative overflow-hidden flex flex-col border-r border-white/5">
                             <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-5 mix-blend-overlay"></div>
                             
-                            {/* Glowing ambient lights */}
                             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3"></div>
                             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-red-600/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3"></div>
                             
                             <div className="relative z-10 flex flex-col h-full">
                                 <div className="flex items-center justify-between mb-12">
-                                    <Link href="/" className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors w-fit group">
+                                    <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors w-fit group">
                                         <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                                        <span className="font-bold text-sm uppercase tracking-wider">Zpět na web</span>
-                                    </Link>
+                                        <span className="font-bold text-sm uppercase tracking-wider">Zpět</span>
+                                    </button>
                                     
-                                    {/* Logo OFS */}
                                     <div className="relative w-12 h-12 bg-white rounded-full p-1 overflow-hidden shadow-lg shadow-primary/20">
-                                        <Image
-                                            src="/main-logo.jpeg"
-                                            alt="OFS Logo"
-                                            fill
-                                            sizes="48px"
-                                            className="object-cover"
-                                        />
+                                        <Image src="/main-logo.jpeg" alt="OFS Logo" fill sizes="48px" className="object-cover" />
                                     </div>
                                 </div>
 
@@ -242,7 +342,7 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
                         </div>
 
                         {/* Right Column: Premium Dark Registration Form */}
-                        <div className="w-full lg:w-7/12 bg-[#050810] p-8 md:p-12 lg:p-16 flex flex-col justify-center relative">
+                        <div className="w-full lg:w-7/12 bg-[#050810] p-8 md:p-12 lg:p-16 flex flex-col justify-center relative overflow-y-auto">
                             
                             <form onSubmit={handleSubmit} className="max-w-2xl w-full mx-auto space-y-12 relative z-10">
                                 
@@ -255,7 +355,7 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
                                     
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="md:col-span-2">
-                                            <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Jméno a příjmení</label>
+                                            <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Jméno a příjmení rodiče</label>
                                             <input required type="text" name="parentName" value={formData.parentName} onChange={handleChange} className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-medium text-white placeholder-slate-600 shadow-inner" placeholder="Např. Jan Novák" />
                                         </div>
                                         <div>
@@ -264,7 +364,7 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
                                         </div>
                                         <div>
                                             <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Telefonní číslo</label>
-                                            <input required type="tel" name="parentPhone" value={formData.parentPhone} onChange={handleChange} className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-medium text-white placeholder-slate-600 shadow-inner" placeholder="+420 123 456 789" />
+                                            <input required type="tel" name="parentPhone" pattern="^[+0-9\s\-()]{9,20}$" title="Zadejte platné telefonní číslo (např. +420 123 456 789)" value={formData.parentPhone} onChange={handleChange} className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-medium text-white placeholder-slate-600 shadow-inner" placeholder="+420 123 456 789" />
                                         </div>
                                     </div>
                                 </div>
@@ -276,6 +376,23 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
                                         <h2 className="text-xl font-black text-white uppercase tracking-wider">Účastník (Dítě)</h2>
                                     </div>
                                     
+                                    {/* Výběr dítěte */}
+                                    <div className="mb-6">
+                                        <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Vyberte dítě (nebo vytvořte nové)</label>
+                                        <select 
+                                            value={selectedChildId} 
+                                            onChange={(e) => setSelectedChildId(e.target.value)}
+                                            className="w-full px-5 py-4 rounded-2xl border border-white/10 bg-white/5 focus:bg-white/10 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-medium text-white appearance-none cursor-pointer shadow-inner"
+                                        >
+                                            <option value="new" className="bg-slate-900">+ Nové dítě</option>
+                                            {myChildren && myChildren.map(child => (
+                                                <option key={child._id} value={child._id} className="bg-slate-900">
+                                                    {child.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="md:col-span-2">
                                             <label className="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Jméno a příjmení dítěte</label>
@@ -320,12 +437,27 @@ export default function RegistrationPage({ params }: { params: Promise<{ campId:
                                 </div>
 
                                 <div className="pt-6 relative z-10">
-                                    <div className="flex items-start gap-4 bg-primary/5 text-slate-300 p-6 rounded-3xl border border-primary/20 mb-8 backdrop-blur-sm">
-                                        <Info className="shrink-0 mt-0.5 text-primary" size={20} />
-                                        <p className="text-sm font-medium leading-relaxed">
-                                            Odesláním přihlášky souhlasíte se zpracováním osobních údajů (GDPR) za účelem evidence účastníků kempu. Další informace vám zašleme e-mailem.
-                                        </p>
-                                    </div>
+                                    <label className="flex items-start gap-4 bg-primary/5 text-slate-300 p-6 rounded-3xl border border-primary/20 mb-8 backdrop-blur-sm cursor-pointer group hover:bg-primary/10 transition-colors">
+                                        <div className="shrink-0 mt-1 relative flex items-center justify-center">
+                                            <input 
+                                                type="checkbox" 
+                                                name="gdprConsent"
+                                                required 
+                                                checked={formData.gdprConsent}
+                                                onChange={handleChange}
+                                                className="peer appearance-none w-5 h-5 border-2 border-primary/50 rounded bg-white/5 checked:bg-primary checked:border-primary cursor-pointer transition-all"
+                                            />
+                                            <CheckCircle2 size={14} className="absolute text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-sm font-bold text-white mb-1 group-hover:text-primary transition-colors">
+                                                Souhlas se zpracováním údajů (GDPR) a podmínkami
+                                            </p>
+                                            <p className="text-xs text-slate-400 leading-relaxed">
+                                                Odesláním přihlášky souhlasíte se zpracováním osobních údajů za účelem evidence účastníků kempu. Přihláška bude navázána na váš klientský účet.
+                                            </p>
+                                        </div>
+                                    </label>
 
                                     <button
                                         type="submit"

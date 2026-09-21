@@ -12,7 +12,7 @@ export default function CampDetails() {
     const rawContent = useQuery(api.content.getContent);
     const [content, setContent] = useState({
         section_title: 'Termíny',
-        section_year: '2026',
+        section_year: '2027',
         description: 'Vyberte si ten správný týden. Kapacita je omezená, tak neváhejte!',
         json_timeline: '[]'
     });

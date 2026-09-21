@@ -86,7 +86,7 @@ export default function Footer() {
                         <ul className="space-y-4">
                             {[
                                 { name: 'Úvod', href: '/' },
-                                { name: 'Termíny 2026', href: '#camps' },
+                                { name: 'Termíny 2027', href: '#camps' },
                                 { name: 'Pro rodiče', href: '#parents' },
                                 { name: 'Galerie', href: '#gallery' },
                                 { name: 'Kontakt', href: '#contact' },

@@ -9,6 +9,13 @@ export const { auth, signIn, signOut, store } = convexAuth({
         hashSecret: async (password: string) => bcrypt.hashSync(password, 10),
         verifySecret: async (password: string, hash: string) => bcrypt.compareSync(password, hash),
       },
+      profile(params) {
+        return {
+          email: params.email as string,
+          name: params.name as string,
+          phone: params.phone as string,
+        };
+      },
     }),
   ],
 });

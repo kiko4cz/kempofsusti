@@ -9,7 +9,7 @@ export const backfill = mutation({
     if (existingCamps.length === 0) {
       const defaultCamps = [
         {
-          dates: "13. 7. – 17. 7. 2026",
+          dates: "13. 7. – 17. 7. 2027",
           location: "Areál TJ Vaňov, Brzákova 146/1",
           price: "3 000",
           features: ["Celodenní strava", "Kempový set", "Pitný režim"],
@@ -17,7 +17,7 @@ export const backfill = mutation({
           createdAt: Date.now(),
         },
         {
-          dates: "20. 7. – 24. 7. 2026",
+          dates: "20. 7. – 24. 7. 2027",
           location: "Areál TJ Vaňov, Brzákova 146/1",
           price: "3 000",
           features: ["Celodenní strava", "Kempový set", "Pitný režim"],
@@ -184,7 +184,7 @@ export const backfill = mutation({
     const existingStats = await ctx.db.query("stats").collect();
     if (existingStats.length === 0) {
       await ctx.db.insert("stats", {
-        year: 2026,
+        year: 2027,
         createdAt: Date.now(),
         turnuses: [
           {
@@ -261,7 +261,7 @@ export const backfill = mutation({
     if (existingNews.length === 0) {
       const defaultNews = [
         {
-          title: "Přípravy na ročník 2026 v plném proudu",
+          title: "Přípravy na ročník 2027 v plném proudu",
           date: new Date().toISOString(),
           content: "Již nyní usilovně pracujeme na zajištění nejlepšího programu pro nadcházející léto. Těšit se můžete na nové tréninkové metody i zajímavé hosty.",
           active: true,

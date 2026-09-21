@@ -28,6 +28,16 @@ export default function AdminLogin() {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        if (email.toLowerCase() !== 'admin@kempofsusti.cz') {
+            toast.error("Přístup odepřen", {
+                description: "Tento přihlašovací portál je pouze pro hlavního administrátora.",
+                icon: <ShieldAlert className="text-white" size={18} />,
+                style: { background: '#ef4444', color: '#fff', border: 'none' }
+            });
+            return;
+        }
+
         setLoading(true);
 
         try {

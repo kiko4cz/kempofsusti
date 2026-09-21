@@ -10,9 +10,11 @@
 
 import type * as auth from "../auth.js";
 import type * as camps from "../camps.js";
+import type * as children from "../children.js";
 import type * as content from "../content.js";
 import type * as debug from "../debug.js";
 import type * as emails from "../emails.js";
+import type * as evaluations from "../evaluations.js";
 import type * as files from "../files.js";
 import type * as gallery from "../gallery.js";
 import type * as http from "../http.js";
@@ -21,6 +23,7 @@ import type * as news from "../news.js";
 import type * as registrations from "../registrations.js";
 import type * as seed from "../seed.js";
 import type * as settings from "../settings.js";
+import type * as setup from "../setup.js";
 import type * as sponsors from "../sponsors.js";
 import type * as stats from "../stats.js";
 import type * as team from "../team.js";
@@ -36,9 +39,11 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   camps: typeof camps;
+  children: typeof children;
   content: typeof content;
   debug: typeof debug;
   emails: typeof emails;
+  evaluations: typeof evaluations;
   files: typeof files;
   gallery: typeof gallery;
   http: typeof http;
@@ -47,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   registrations: typeof registrations;
   seed: typeof seed;
   settings: typeof settings;
+  setup: typeof setup;
   sponsors: typeof sponsors;
   stats: typeof stats;
   team: typeof team;

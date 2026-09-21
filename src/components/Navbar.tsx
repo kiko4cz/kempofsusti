@@ -8,9 +8,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { useConvexAuth } from 'convex/react';
 const navItems = [
     { name: 'Domů', href: '/', icon: Home },
-    { name: 'Kempy 2026', href: '#camps', icon: Calendar },
+    { name: 'Kempy 2027', href: '#camps', icon: Calendar },
     { name: 'Aktuality', href: '#parents-news', icon: Megaphone },
     { name: 'Pro rodiče', href: '#parents', icon: Info },
     { name: 'Galerie', href: '#gallery', icon: ImageIcon },
@@ -21,6 +22,7 @@ const navItems = [
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const { isAuthenticated } = useConvexAuth();
     
     const rawContent = useQuery(api.content.getContent);
     const [logoText, setLogoText] = useState('KEMP OFSUSTI');
@@ -103,17 +105,43 @@ export default function Navbar() {
                         ))}
                     </div>
 
-                    {/* Mobile Menu Button */}
-                    <button
+                    {/* CTA Button */}
+                    <Link
+                        href={isAuthenticated ? "/portal" : "/portal/login"}
                         className={clsx(
-                            "xl:hidden p-2 rounded-full transition-colors",
-                            scrolled ? "text-secondary bg-gray-100" : "text-white bg-white/20 backdrop-blur-md"
+                            "hidden md:flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm transition-all duration-300 ml-4 group",
+                            scrolled
+                                ? "bg-primary text-white hover:bg-orange-500 shadow-md shadow-primary/20"
+                                : "bg-white text-primary hover:bg-gray-50 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
                         )}
-                        onClick={() => setIsOpen(!isOpen)}
-                        aria-label="Toggle menu"
                     >
-                        {isOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
+                        {isAuthenticated ? 'Klientská zóna' : 'Přihlásit se'}
+                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                    </Link>
+
+                    {/* Mobile Menu Button */}
+                    <div className="flex items-center gap-3 xl:hidden">
+                        <Link
+                            href={isAuthenticated ? "/portal" : "/portal/login"}
+                            className={clsx(
+                                "md:hidden px-4 py-2 rounded-full font-bold text-xs transition-colors flex items-center gap-1.5",
+                                scrolled ? "bg-primary text-white" : "bg-white text-primary"
+                            )}
+                        >
+                            {isAuthenticated ? 'Portál' : 'Přihlášení'}
+                            <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                        </Link>
+                        <button
+                            className={clsx(
+                                "p-2 rounded-full transition-colors",
+                                scrolled ? "text-secondary bg-gray-100" : "text-white bg-white/20 backdrop-blur-md"
+                            )}
+                            onClick={() => setIsOpen(!isOpen)}
+                            aria-label="Toggle menu"
+                        >
+                            {isOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </div>
                 </div>
             </motion.nav>
 
@@ -140,6 +168,16 @@ export default function Navbar() {
                                     {item.name}
                                 </Link>
                             ))}
+                            
+                            <div className="mt-4 pt-4 border-t border-gray-100">
+                                <Link
+                                    href={isAuthenticated ? "/portal" : "/portal/login"}
+                                    onClick={() => setIsOpen(false)}
+                                    className="flex items-center justify-center gap-2 w-full py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-orange-500 transition-colors"
+                                >
+                                    {isAuthenticated ? 'Přejít do klientské zóny' : 'Přihlásit se / Registrovat'}
+                                </Link>
+                            </div>
                         </div>
                     </motion.div>
                 )}

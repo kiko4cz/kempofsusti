@@ -54,9 +54,10 @@ export default function AdminLayout({
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-    const menuItems = [
+    const baseMenuItems = [
         { name: 'Přehled', href: '/admin/dashboard', icon: LayoutDashboard },
         { name: 'Přihlášky', href: '/admin/registrations', icon: Calendar },
+        { name: 'Uživatelé', href: '/admin/users', icon: Users },
         { name: 'Tým', href: '/admin/team', icon: Users },
         { name: 'Obsah webu', href: '/admin/content', icon: FileText },
         { name: 'Sponzoři', href: '/admin/sponsors', icon: Heart },
@@ -66,6 +67,11 @@ export default function AdminLayout({
         { name: 'Turnusy', href: '/admin/history', icon: History },
         { name: 'Nastavení', href: '/admin/settings', icon: Settings },
     ];
+
+    const menuItems = user?.role === 'coach' 
+        ? [{ name: 'Moje skupina', href: '/admin/my-group', icon: Users }] 
+        : baseMenuItems;
+
 
     return (
         <div className="admin-mesh-bg min-h-screen text-slate-900 font-sans selection:bg-primary/10">

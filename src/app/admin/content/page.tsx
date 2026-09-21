@@ -26,7 +26,7 @@ const defaultContent: ContentSection[] = [
         fields: [
             { key: 'logo_text', label: 'Text Loga', type: 'text', value: 'KEMP OFSU' },
             { key: 'nav_item_1', label: 'Položka menu 1', type: 'text', value: 'O NÁS' },
-            { key: 'nav_item_2', label: 'Položka menu 2', type: 'text', value: 'KEMPY 2026' },
+            { key: 'nav_item_2', label: 'Položka menu 2', type: 'text', value: 'KEMPY 2027' },
             { key: 'nav_item_3', label: 'Položka menu 3', type: 'text', value: 'PRO RODIČE' },
             { key: 'nav_item_4', label: 'Položka menu 4', type: 'text', value: 'TÝM' },
             { key: 'nav_item_5', label: 'Položka menu 5', type: 'text', value: 'KONTAKT' },
@@ -36,7 +36,7 @@ const defaultContent: ContentSection[] = [
         id: 'hero',
         label: 'Úvodní sekce (Hero)',
         fields: [
-            { key: 'bg_image', label: 'Obrázek na pozadí', type: 'image', value: '/photo_2026.jpg' },
+            { key: 'bg_image', label: 'Obrázek na pozadí', type: 'image', value: '/photo_2027.jpg' },
             { key: 'title_line1', label: 'Nadpis - Řádek 1', type: 'text', value: 'FOTBALEM' },
             { key: 'title_line2', label: 'Nadpis - Zvýrazněné', type: 'text', value: 'ZÁBAVA' },
             { key: 'title_line3', label: 'Nadpis - Řádek 3', type: 'text', value: 'JEN ZAČÍNÁ' },
@@ -70,7 +70,7 @@ const defaultContent: ContentSection[] = [
         label: 'Detaily Kempu',
         fields: [
             { key: 'section_title', label: 'Nadpis', type: 'text', value: 'Termíny' },
-            { key: 'section_year', label: 'Rok', type: 'text', value: '2026' },
+            { key: 'section_year', label: 'Rok', type: 'text', value: '2027' },
             { key: 'description', label: 'Popis pod nadpisem', type: 'textarea', value: 'Vyberte si ten správný týden. Kapacita je omezená, tak neváhejte!' },
         ]
     },
@@ -115,7 +115,7 @@ const defaultContent: ContentSection[] = [
         fields: [
             { key: 'section_title_small', label: 'Malý nadpis', type: 'text', value: 'Tradice' },
             { key: 'section_title_main', label: 'Hlavní nadpis', type: 'text', value: 'HISTORIE KEMPU' },
-            { key: 'json_timeline', label: 'Časová osa (JSON formát)', type: 'textarea', value: '[{"year":"2026","loc":"Vaňov, Vaňov"},{"year":"2025","loc":"Přestanov, Vaňov"},{"year":"2024","loc":"Povrly"}]' },
+            { key: 'json_timeline', label: 'Časová osa (JSON formát)', type: 'textarea', value: '[{"year":"2027","loc":"Vaňov, Vaňov"},{"year":"2026","loc":"Přestanov, Vaňov"},{"year":"2025","loc":"Povrly"}]' },
         ]
     },
     {
@@ -140,7 +140,7 @@ const defaultContent: ContentSection[] = [
         label: 'Patička',
         fields: [
             { key: 'about_text', label: 'O nás (krátký text)', type: 'textarea', value: 'Letní fotbalové kempy s tradicí. Zaměřujeme se na rozvoj, zábavu a lásku ke sportu.' },
-            { key: 'copyright', label: 'Copyright text', type: 'text', value: '© 2026 Kemp OfsuSti. Všechna práva vyhrazena.' },
+            { key: 'copyright', label: 'Copyright text', type: 'text', value: '© 2027 Kemp OfsuSti. Všechna práva vyhrazena.' },
         ]
     }
 ];

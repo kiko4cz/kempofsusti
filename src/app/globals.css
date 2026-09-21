@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark, .dark *));
+
 :root {
   /* MODERN SPORT PALETTE (Red & White) */
 
@@ -108,13 +110,12 @@
   animation: mesh 15s ease infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-
-  /* Keeping light mode as default for clean sports look as requested, but overriding simple dark mode preference to maintain brand identity */
-  :root {
-    --background: #FFFFFF;
-    --foreground: #0F172A;
-  }
+.dark {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --admin-bg: #020617;
+  --admin-card: rgba(15, 23, 42, 0.8);
+  --admin-border: rgba(255, 255, 255, 0.1);
 }
 
 body {

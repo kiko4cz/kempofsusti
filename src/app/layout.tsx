@@ -100,6 +100,9 @@ const jsonLd = {
 };
 
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
+import CookieBanner from "@/components/CookieBanner";
+
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 export default function RootLayout({
   children,
@@ -107,17 +110,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="cs" className="scroll-smooth">
+    <html lang="cs" className="scroll-smooth" suppressHydrationWarning>
       <body
         className={`${outfit.variable} ${inter.variable} antialiased`}
       >
-        <ConvexClientProvider>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-          />
-          {children}
-        </ConvexClientProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <ConvexClientProvider>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            {children}
+            <CookieBanner />
+          </ConvexClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

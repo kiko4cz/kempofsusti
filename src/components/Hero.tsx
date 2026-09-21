@@ -20,7 +20,7 @@ import { api } from "../../convex/_generated/api";
 export default function Hero() {
     const rawContent = useQuery(api.content.getContent);
     const [content, setContent] = useState({
-        bg_image: '/photo_2026.jpg',
+        bg_image: '/photo_2027.jpg',
         title_line1: 'FOTBALEM',
         title_line2: 'ZÁBAVA',
         title_line3: 'JEN ZAČÍNÁ',
@@ -39,7 +39,10 @@ export default function Hero() {
             if (heroSection) {
                 const newContent: any = { ...content };
                 heroSection.fields.forEach(field => {
-                    newContent[field.key] = field.value;
+                    // Přepsat výchozí hodnotu pouze pokud v DB není prázdná
+                    if (field.value !== undefined && field.value !== null && String(field.value).trim() !== '') {
+                        newContent[field.key] = field.value;
+                    }
                 });
                 setContent(newContent);
             }
@@ -49,18 +52,18 @@ export default function Hero() {
     return (
         <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
             {/* Background Image with Enhanced Gradient Overlay */}
-            <div className="absolute inset-0 z-0">
-                {/* Darker overlay for better text contrast */}
-                <div className="absolute inset-0 bg-gradient-to-r from-secondary/90 via-secondary/50 to-transparent z-10" />
-                <div className="absolute inset-0 bg-gradient-to-t from-secondary via-transparent to-transparent z-10" />
-
+            <div className="absolute inset-0 z-0 bg-secondary">
                 {/* Main background image */}
                 <div
-                    className="w-full h-full bg-cover bg-center bg-no-repeat animate-subtle-zoom"
+                    className="absolute inset-0 bg-cover bg-center bg-no-repeat animate-subtle-zoom"
                     style={{
-                        backgroundImage: `url("${content.bg_image}")`,
+                        backgroundImage: `url(${content.bg_image})`,
                     }}
                 />
+
+                {/* Darker overlay for better text contrast */}
+                <div className="absolute inset-0 bg-gradient-to-r from-secondary/90 via-secondary/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-secondary via-transparent to-transparent" />
             </div>
 
             {/* Content */}
