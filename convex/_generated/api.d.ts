@@ -22,6 +22,7 @@ import type * as migrate from "../migrate.js";
 import type * as news from "../news.js";
 import type * as registrations from "../registrations.js";
 import type * as seed from "../seed.js";
+import type * as seedNews from "../seedNews.js";
 import type * as settings from "../settings.js";
 import type * as setup from "../setup.js";
 import type * as sponsors from "../sponsors.js";
@@ -51,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   news: typeof news;
   registrations: typeof registrations;
   seed: typeof seed;
+  seedNews: typeof seedNews;
   settings: typeof settings;
   setup: typeof setup;
   sponsors: typeof sponsors;

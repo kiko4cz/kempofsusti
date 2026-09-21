@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Edit2, Trash2, Save, X, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, X, Eye, EyeOff, Loader2, AlertCircle, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
@@ -193,6 +193,24 @@ export default function AdminNews() {
                                     className="w-full bg-white/50 border border-slate-200 rounded-[2rem] px-6 py-4 text-slate-900 focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none transition-all h-48 resize-none placeholder:text-slate-300 font-medium leading-relaxed"
                                     placeholder="Zde napište text vaší aktuality..."
                                 />
+                                <div className="mt-4 bg-blue-50/50 border border-blue-100 rounded-2xl p-4">
+                                    <h5 className="text-xs font-bold text-blue-900 uppercase tracking-wider mb-2 flex items-center gap-2">
+                                        <Info size={14} /> Tipy pro formátování textu
+                                    </h5>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-blue-800">
+                                        <div>
+                                            <code className="font-bold bg-white px-1.5 py-0.5 rounded text-blue-900">**text**</code> = <strong>tučné písmo</strong>
+                                            <br />
+                                            <code className="font-bold bg-white px-1.5 py-0.5 rounded text-blue-900 mt-1 inline-block">*text*</code> = <em>kurzíva</em>
+                                        </div>
+                                        <div>
+                                            <code className="font-bold bg-white px-1.5 py-0.5 rounded text-blue-900">1. Položka</code> = číslovaný seznam
+                                            <br />
+                                            <code className="font-bold bg-white px-1.5 py-0.5 rounded text-blue-900 mt-1 inline-block">- Položka</code> = odrážkový seznam
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-blue-700 mt-3 font-medium">Pro nový odstavec stačí zmáčknout dvakrát Enter (udělat prázdný řádek).</p>
+                                </div>
                             </div>
 
                             <div className="flex items-center justify-between p-6 bg-slate-50 rounded-[2rem] border border-slate-100">

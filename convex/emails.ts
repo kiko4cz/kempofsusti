@@ -87,13 +87,36 @@ export const sendStatusEmail = internalAction({
           </div>
         </div>
       `;
+    } else if (args.status === "Přijatá") {
+      subject = `Kemp OFS Ústí: Přihláška přijata ke zpracování (${args.childName})`;
+      html = `
+        <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff;">
+          <div style="background-color: #0a0f1c; padding: 30px; text-align: center; border-bottom: 4px solid #ef4444;">
+            <h1 style="margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 2px; color: #fff;">
+              <span style="color: #ef4444;">Kemp OFS</span> Ústí
+            </h1>
+          </div>
+          <div style="padding: 40px;">
+            <h2 style="color: #3b82f6; margin-top: 0; font-size: 22px;">Přihláška byla úspěšně přijata</h2>
+            <p style="font-size: 16px; color: #475569;">Dobrý den, ${args.parentName},</p>
+            <p style="font-size: 16px; line-height: 1.6; color: #475569;">potvrzujeme přijetí přihlášky účastníka <strong style="color: #0f172a;">${args.childName}</strong> na kemp <strong style="color: #0f172a;">${args.campName}</strong> (${args.campDates}).</p>
+            
+            <p style="font-size: 16px; line-height: 1.6; color: #475569;">Vaše přihláška nyní čeká na schválení naším týmem. Jakmile ji zkontrolujeme a schválíme, pošleme Vám další e-mail s pokyny k platbě.</p>
+            
+            <p style="font-size: 16px; line-height: 1.6; color: #475569;">Stav přihlášky můžete kdykoliv sledovat ve své <a href="https://kempofsusti.cz/portal/registrations" style="color: #ef4444; font-weight: bold;">Klientské zóně</a>.</p>
+
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
+            <p style="font-size: 14px; margin-bottom: 0; color: #64748b;"><strong>Tým fotbalových kempů OFS Ústí</strong><br/>info@kempofsusti.cz</p>
+          </div>
+        </div>
+      `;
     } else {
       return;
     }
 
     try {
       await transporter.sendMail({
-        from: `"Kemp OFS Ústí" <${process.env.SMTP_USER}>`,
+        from: `"Kemp OFS Ústí" <kempofsusti@seznam.cz>`,
         to: args.email,
         subject: subject,
         html: html,

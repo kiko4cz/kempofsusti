@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 export default function ParentsNews() {
     const convexNews = useQuery(api.news.getNews);
@@ -110,9 +111,19 @@ export default function ParentsNews() {
                                             <h3 className="text-xl font-bold text-secondary mb-3 group-hover:text-primary transition-colors leading-tight">
                                                 {item.title}
                                             </h3>
-                                            <p className="text-gray-600 leading-relaxed text-sm">
-                                                {item.content}
-                                            </p>
+                                            <div className="text-gray-600 leading-relaxed text-sm text-balance">
+                                                <ReactMarkdown
+                                                    components={{
+                                                        p: ({node, ...props}) => <p className="mb-3 last:mb-0" {...props} />,
+                                                        strong: ({node, ...props}) => <strong className="font-bold text-gray-900" {...props} />,
+                                                        ol: ({node, ...props}) => <ol className="list-decimal pl-5 space-y-1 my-3" {...props} />,
+                                                        ul: ({node, ...props}) => <ul className="list-disc pl-5 space-y-1 my-3" {...props} />,
+                                                        li: ({node, ...props}) => <li {...props} />
+                                                    }}
+                                                >
+                                                    {item.content}
+                                                </ReactMarkdown>
+                                            </div>
                                         </div>
                                     </div>
                                 </motion.div>

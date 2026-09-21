@@ -48,6 +48,17 @@ export const submitRegistration = mutation({
       status: "Nová",
       createdAt: Date.now(),
     });
+
+    // Odeslat e-mail rodiči o přijetí přihlášky (pokud má nastaveno SMTP)
+    await ctx.scheduler.runAfter(0, internal.emails.sendStatusEmail, {
+      email: restArgs.parentEmail,
+      parentName: restArgs.parentName,
+      childName: restArgs.childName,
+      campName: restArgs.campName,
+      campDates: restArgs.campDates,
+      status: "Přijatá",
+    });
+
     return registrationId;
   },
 });
