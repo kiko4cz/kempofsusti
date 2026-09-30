@@ -27,18 +27,36 @@ export const submitRegistration = mutation({
     
     let finalChildId = childId;
 
-    // Pokud uživatel je přihlášen, ale nevybral existující dítě, vytvoříme mu ho automaticky
+    // Pokud uživatel je přihlášen, ale nevybral existující dítě, vytvoříme mu ho automaticky (nebo najdeme existující podle jména)
     if (userId && !finalChildId) {
-      finalChildId = await ctx.db.insert("children", {
-        parentId: userId,
-        name: restArgs.childName,
-        birthDate: restArgs.childBirthDate,
-        club: restArgs.childClub,
-        tshirtSize: restArgs.tshirtSize,
-        healthInfo: restArgs.healthInfo,
-        notes: restArgs.notes,
-        createdAt: Date.now(),
-      });
+      const existingChild = await ctx.db
+        .query("children")
+        .withIndex("by_parent", (q) => q.eq("parentId", userId))
+        .filter((q) => q.eq(q.field("name"), restArgs.childName))
+        .first();
+
+      if (existingChild) {
+        finalChildId = existingChild._id;
+        // Aktualizujeme údaje dítěte podle nové přihlášky
+        await ctx.db.patch(existingChild._id, {
+          birthDate: restArgs.childBirthDate,
+          club: restArgs.childClub,
+          tshirtSize: restArgs.tshirtSize,
+          healthInfo: restArgs.healthInfo,
+          notes: restArgs.notes || existingChild.notes,
+        });
+      } else {
+        finalChildId = await ctx.db.insert("children", {
+          parentId: userId,
+          name: restArgs.childName,
+          birthDate: restArgs.childBirthDate,
+          club: restArgs.childClub,
+          tshirtSize: restArgs.tshirtSize,
+          healthInfo: restArgs.healthInfo,
+          notes: restArgs.notes,
+          createdAt: Date.now(),
+        });
+      }
     }
 
     const registrationId = await ctx.db.insert("registrations", {

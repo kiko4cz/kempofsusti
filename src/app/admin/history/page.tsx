@@ -38,6 +38,7 @@ interface HistoryTerm {
     status?: string;
     features?: string;
     mapLink?: string; // Google Maps link;
+    capacity?: string; // Max capacity
 }
 
 interface HistoryItem {
@@ -503,7 +504,7 @@ export default function AdminHistory() {
                                                             <h5 className="font-bold text-primary mb-4 uppercase tracking-widest text-xs flex items-center gap-2">
                                                                 Nastavení pro hlavní stranu
                                                             </h5>
-                                                            <div className="grid grid-cols-2 gap-4">
+                                                            <div className="grid grid-cols-3 gap-4">
                                                                 <div>
                                                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Cena</label>
                                                                     <input
@@ -526,7 +527,17 @@ export default function AdminHistory() {
                                                                         <option value="Obsazeno">Obsazeno</option>
                                                                     </select>
                                                                 </div>
-                                                                <div className="col-span-2">
+                                                                <div>
+                                                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Max. kapacita</label>
+                                                                    <input
+                                                                        type="number"
+                                                                        value={activeTerm.capacity || ''}
+                                                                        onChange={(e) => handleChangeTerm(activeYear.id, activeTerm.id, 'capacity', e.target.value)}
+                                                                        className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 font-bold focus:border-primary focus:ring-1 focus:outline-none"
+                                                                        placeholder="např. 36"
+                                                                    />
+                                                                </div>
+                                                                <div className="col-span-3">
                                                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Co cena obsahuje (odděleno čárkou)</label>
                                                                     <input
                                                                         type="text"

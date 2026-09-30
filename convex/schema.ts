@@ -32,6 +32,7 @@ export default defineSchema({
     location: v.string(),
     price: v.string(),
     status: v.string(),
+    capacity: v.optional(v.number()), // Max kapacita turnusu
     features: v.array(v.string()),
     createdAt: v.number(),
   }),

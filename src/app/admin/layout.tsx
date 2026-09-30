@@ -18,9 +18,12 @@ export default function AdminLayout({
     const pathname = usePathname();
     const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const { isAuthenticated, isLoading } = useConvexAuth();
+    const { isAuthenticated, isLoading: isAuthLoading } = useConvexAuth();
     const { signOut } = useAuthActions();
     const user = useQuery(api.whoami.whoAmI);
+    
+    // Combine loading states
+    const isLoading = isAuthLoading || (isAuthenticated && user === undefined);
 
     console.log("AdminLayout state:", { isAuthenticated, isLoading, pathname, user });
 
@@ -28,10 +31,16 @@ export default function AdminLayout({
     const isLoginPage = pathname === '/admin/login';
 
     useEffect(() => {
-        if (!isLoading && !isAuthenticated && !isLoginPage) {
-            router.push('/admin/login');
+        if (!isLoading && !isLoginPage) {
+            if (!isAuthenticated) {
+                router.push('/admin/login');
+            } else if (user && user.role !== 'admin' && user.role !== 'coach') {
+                // User is authenticated but doesn't have the right role
+                toast.error("Nemáte oprávnění k přístupu do administrace.");
+                router.push('/portal');
+            }
         }
-    }, [isLoading, isAuthenticated, isLoginPage, router]);
+    }, [isLoading, isAuthenticated, isLoginPage, router, user]);
 
     if (isLoading) return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -73,6 +82,8 @@ export default function AdminLayout({
         : baseMenuItems;
 
 
+    const isAuthorized = user?.role === 'admin' || user?.role === 'coach';
+
     return (
         <div className="admin-mesh-bg min-h-screen text-slate-900 font-sans selection:bg-primary/10">
             <Toaster position="top-right" richColors theme="light" closeButton />
@@ -81,7 +92,7 @@ export default function AdminLayout({
                 <div className="min-h-screen w-full">
                     {children}
                 </div>
-            ) : isAuthenticated ? (
+            ) : isAuthenticated && isAuthorized ? (
                 <div className="flex h-screen overflow-hidden">
                     {/* Mobile Sidebar Overlay */}
                     <AnimatePresence>

@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Search, Filter, Mail, Phone, Calendar, Trash2, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { FileText, Search, Filter, Mail, Phone, Calendar, Trash2, CheckCircle2, XCircle, Clock, User } from 'lucide-react';
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { toast } from "sonner";
 import { Id } from "../../../../convex/_generated/dataModel";
-import { User } from 'lucide-react';
+
 export default function RegistrationsPage() {
     const registrations = useQuery(api.registrations.getRegistrations);
     const coaches = useQuery(api.user.getCoaches);
+    const rawContent = useQuery(api.content.getContent);
     const updateStatus = useMutation(api.registrations.updateStatus);
     const deleteRegistration = useMutation(api.registrations.deleteRegistration);
     const triggerEmail = useMutation(api.registrations.triggerEmail);
@@ -18,6 +19,7 @@ export default function RegistrationsPage() {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState<string>('all');
+    const [selectedCampFilter, setSelectedCampFilter] = useState<string | null>(null);
 
     const handleUpdateStatus = async (id: Id<"registrations">, newStatus: string) => {
         try {
@@ -76,6 +78,48 @@ export default function RegistrationsPage() {
         }
     };
 
+    const capacities = useMemo(() => {
+        if (!rawContent) return {};
+        const section = rawContent.find((s: any) => s.sectionId === 'history');
+        if (!section) return {};
+        const timelineField = section.fields.find((f: any) => f.key === 'json_timeline');
+        if (!timelineField || !timelineField.value) return {};
+        
+        try {
+            const timeline = JSON.parse(String(timelineField.value));
+            const capMap: Record<string, string> = {};
+            for (const year of timeline) {
+                if (year.terms) {
+                    for (const term of year.terms) {
+                        if (term.name && term.capacity) {
+                            capMap[term.name] = term.capacity;
+                        }
+                    }
+                }
+            }
+            return capMap;
+        } catch (e) {
+            return {};
+        }
+    }, [rawContent]);
+
+    const campStats = useMemo(() => {
+        if (!registrations) return [];
+        const stats: Record<string, { count: number, approved: number, capacity?: string }> = {};
+        
+        registrations.forEach(reg => {
+            if (!stats[reg.campName]) {
+                stats[reg.campName] = { count: 0, approved: 0, capacity: capacities[reg.campName] };
+            }
+            stats[reg.campName].count++;
+            if (reg.status === 'Schválená') {
+                stats[reg.campName].approved++;
+            }
+        });
+        
+        return Object.entries(stats).map(([name, data]) => ({ name, ...data })).sort((a, b) => b.count - a.count);
+    }, [registrations, capacities]);
+
     const filteredRegistrations = registrations?.filter(reg => {
         const matchesSearch = 
             reg.childName.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -83,8 +127,9 @@ export default function RegistrationsPage() {
             reg.campName.toLowerCase().includes(searchTerm.toLowerCase());
         
         const matchesStatus = filterStatus === 'all' || reg.status === filterStatus;
+        const matchesCamp = selectedCampFilter === null || reg.campName === selectedCampFilter;
 
-        return matchesSearch && matchesStatus;
+        return matchesSearch && matchesStatus && matchesCamp;
     });
 
     return (
@@ -106,6 +151,36 @@ export default function RegistrationsPage() {
                     </p>
                 </div>
             </motion.div>
+
+            {campStats.length > 0 && (
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }} 
+                    animate={{ opacity: 1, y: 0 }} 
+                    transition={{ delay: 0.05 }}
+                    className="flex flex-wrap gap-3"
+                >
+                    {campStats.map(camp => (
+                        <button
+                            key={camp.name}
+                            onClick={() => setSelectedCampFilter(selectedCampFilter === camp.name ? null : camp.name)}
+                            className={`flex items-center gap-3 px-4 py-2 rounded-2xl border-2 transition-all font-bold ${
+                                selectedCampFilter === camp.name 
+                                    ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
+                                    : 'bg-white text-slate-700 border-slate-100 hover:border-primary/30 hover:bg-slate-50'
+                            }`}
+                        >
+                            <span>{camp.name}</span>
+                            <div className={`flex flex-col text-xs px-3 py-2 rounded-xl text-left ${
+                                selectedCampFilter === camp.name ? 'bg-white/20' : 'bg-slate-100 text-slate-500'
+                            }`}>
+                                <div><span className="opacity-70">Přijato:</span> <span className="font-bold">{camp.count}</span></div>
+                                <div><span className="opacity-70">Potvrzeno:</span> <span className="font-bold">{camp.approved}</span></div>
+                                {camp.capacity && <div><span className="opacity-70">Kapacita:</span> <span className="font-bold">{camp.capacity}</span></div>}
+                            </div>
+                        </button>
+                    ))}
+                </motion.div>
+            )}
 
             <motion.div 
                 initial={{ opacity: 0, y: 20 }} 

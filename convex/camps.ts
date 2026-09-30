@@ -5,10 +5,31 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 export const getCamps = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db
+    const camps = await ctx.db
       .query("camps")
       .order("desc")
       .collect();
+
+    // Fetch counts for each camp
+    const campsWithCounts = await Promise.all(
+      camps.map(async (camp) => {
+        const registrations = await ctx.db
+          .query("registrations")
+          .filter((q) => q.eq(q.field("campId"), camp._id))
+          .collect();
+
+        const registeredCount = registrations.length;
+        const confirmedCount = registrations.filter(r => r.status === "Schválená").length;
+
+        return {
+          ...camp,
+          registeredCount,
+          confirmedCount,
+        };
+      })
+    );
+
+    return campsWithCounts;
   },
 });
 
@@ -18,6 +39,7 @@ export const addCamp = mutation({
     location: v.string(),
     price: v.string(),
     status: v.string(),
+    capacity: v.optional(v.number()),
     features: v.array(v.string()),
   },
   handler: async (ctx, args) => {
@@ -38,6 +60,7 @@ export const updateCamp = mutation({
     location: v.string(),
     price: v.string(),
     status: v.string(),
+    capacity: v.optional(v.number()),
     features: v.array(v.string()),
   },
   handler: async (ctx, args) => {
